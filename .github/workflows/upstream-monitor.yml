@@ -1,0 +1,134 @@
+name: Monitor Upstream Repository
+
+on:
+  schedule:
+    # Run daily at 6 AM UTC
+    - cron: '0 6 * * *'
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  monitor-upstream:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout current repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Clone upstream repository
+        run: |
+          git clone https://github.com/zabbix/python-zabbix-utils.git upstream
+          cd upstream
+
+      - name: Check for new commits since v2.0.2
+        id: check-commits
+        run: |
+          cd upstream
+          
+          # Get the latest tag
+          LATEST_TAG=$(git tag --sort=-version:refname | head -1)
+          echo "Latest upstream tag: $LATEST_TAG"
+          
+          # Check if there are commits after v2.0.2
+          NEW_COMMITS=$(git log --oneline v2.0.2..HEAD)
+          
+          if [ -n "$NEW_COMMITS" ]; then
+            echo "new_commits=true" >> $GITHUB_OUTPUT
+            echo "latest_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+            
+            # Save commit details
+            git log --oneline v2.0.2..HEAD > ../new_commits.txt
+            
+            # Check if library code changed
+            LIBRARY_CHANGES=$(git diff v2.0.2..HEAD --name-only | grep -E '^zabbix_utils/' || true)
+            if [ -n "$LIBRARY_CHANGES" ]; then
+              echo "library_changes=true" >> $GITHUB_OUTPUT
+              git diff v2.0.2..HEAD --name-only | grep -E '^zabbix_utils/' > ../changed_files.txt
+            else
+              echo "library_changes=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "new_commits=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create issue for new commits
+        if: steps.check-commits.outputs.new_commits == 'true'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            
+            // Read commit details
+            const newCommits = fs.readFileSync('new_commits.txt', 'utf8');
+            const libraryChanges = '${{ steps.check-commits.outputs.library_changes }}' === 'true';
+            const latestTag = '${{ steps.check-commits.outputs.latest_tag }}';
+            
+            let changedFiles = '';
+            if (libraryChanges) {
+              changedFiles = fs.readFileSync('changed_files.txt', 'utf8');
+            }
+            
+            const priority = libraryChanges ? '🔴 HIGH PRIORITY' : '🟡 LOW PRIORITY';
+            const title = libraryChanges 
+              ? `${priority}: New upstream library changes detected (${latestTag})`
+              : `${priority}: New upstream commits detected (${latestTag})`;
+            
+            let body = `## Upstream Repository Changes Detected\n\n`;
+            body += `**Latest upstream tag:** ${latestTag}\n`;
+            body += `**Library code changes:** ${libraryChanges ? 'YES' : 'NO'}\n\n`;
+            
+            if (libraryChanges) {
+              body += `### 🚨 Library Files Changed:\n\`\`\`\n${changedFiles}\`\`\`\n\n`;
+              body += `### Action Required:\n`;
+              body += `1. Review the changes in the upstream repository\n`;
+              body += `2. Update the TypeScript implementation accordingly\n`;
+              body += `3. Update tests if necessary\n`;
+              body += `4. Update version number\n`;
+              body += `5. Update documentation\n\n`;
+            } else {
+              body += `### ℹ️ Non-library changes detected (CI/docs/etc.)\n`;
+              body += `These changes likely don't require TypeScript port updates.\n\n`;
+            }
+            
+            body += `### New Commits:\n\`\`\`\n${newCommits}\`\`\`\n\n`;
+            body += `### Links:\n`;
+            body += `- [Upstream Repository](https://github.com/zabbix/python-zabbix-utils)\n`;
+            body += `- [Compare v2.0.2...HEAD](https://github.com/zabbix/python-zabbix-utils/compare/v2.0.2...HEAD)\n\n`;
+            body += `---\n*This issue was automatically created by the upstream monitoring workflow.*`;
+            
+            // Check if similar issue already exists
+            const existingIssues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'upstream-sync'
+            });
+            
+            const similarIssue = existingIssues.data.find(issue => 
+              issue.title.includes(latestTag)
+            );
+            
+            if (!similarIssue) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: title,
+                body: body,
+                labels: ['upstream-sync', libraryChanges ? 'high-priority' : 'low-priority']
+              });
+              
+              console.log('Created new issue for upstream changes');
+            } else {
+              console.log('Similar issue already exists, skipping creation');
+            }
+
+      - name: Update sync status
+        if: steps.check-commits.outputs.new_commits == 'false'
+        run: |
+          echo "✅ No new upstream commits detected. TypeScript port is up to date with v2.0.2." 

@@ -1,351 +1,260 @@
-# Zabbix utils library
+# TypeScript Zabbix Utils
 
-[![Tests](https://github.com/zabbix/python-zabbix-utils/actions/workflows/tests.yaml/badge.svg)](https://github.com/zabbix/python-zabbix-utils/actions/workflows/tests.yaml)
-[![Zabbix API](https://github.com/zabbix/python-zabbix-utils/actions/workflows/integration_api.yaml/badge.svg)](https://github.com/zabbix/python-zabbix-utils/actions/workflows/integration_api.yaml)
-[![Zabbix sender](https://github.com/zabbix/python-zabbix-utils/actions/workflows/integration_sender.yaml/badge.svg)](https://github.com/zabbix/python-zabbix-utils/actions/workflows/integration_sender.yaml)
-[![Zabbix get](https://github.com/zabbix/python-zabbix-utils/actions/workflows/integration_getter.yaml/badge.svg)](https://github.com/zabbix/python-zabbix-utils/actions/workflows/integration_getter.yaml)
+[![Tests](https://github.com/leroylim/typescript-zabbix-utils/workflows/Tests/badge.svg)](https://github.com/leroylim/typescript-zabbix-utils/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![npm version](https://badge.fury.io/js/zabbix-utils.svg)](https://badge.fury.io/js/zabbix-utils)
 
-[![Zabbix 5.0](https://github.com/zabbix/python-zabbix-utils/actions/workflows/compatibility_50.yaml/badge.svg)](https://github.com/zabbix/python-zabbix-utils/actions/workflows/compatibility_50.yaml)
-[![Zabbix 6.0](https://github.com/zabbix/python-zabbix-utils/actions/workflows/compatibility_60.yaml/badge.svg)](https://github.com/zabbix/python-zabbix-utils/actions/workflows/compatibility_60.yaml)
-[![Zabbix 7.0](https://github.com/zabbix/python-zabbix-utils/actions/workflows/compatibility_70.yaml/badge.svg)](https://github.com/zabbix/python-zabbix-utils/actions/workflows/compatibility_70.yaml)
-[![Zabbix 7.2](https://github.com/zabbix/python-zabbix-utils/actions/workflows/compatibility_72.yaml/badge.svg)](https://github.com/zabbix/python-zabbix-utils/actions/workflows/compatibility_72.yaml)
+A TypeScript port of the official [zabbix-utils](https://github.com/zabbix/python-zabbix-utils) Python library for working with Zabbix API, Zabbix sender, and Zabbix getter protocols.
 
-**zabbix_utils** is a Python library for working with [Zabbix API](https://www.zabbix.com/documentation/current/manual/api/reference) as well as with [Zabbix sender](https://www.zabbix.com/documentation/current/manpages/zabbix_sender) and [Zabbix get](https://www.zabbix.com/documentation/current/manpages/zabbix_get) protocols.
+**Author**: Han Yong Lim <hanyong.lim@gmail.com>  
+**Original Python Library**: [Zabbix SIA](https://github.com/zabbix/python-zabbix-utils)
 
-## Get started
-* [Requirements](#requirements)
-* [Installation](#installation)
-* [Zabbix API](#to-work-with-zabbix-api)
-* [Zabbix Sender](#to-work-via-zabbix-sender-protocol)
-* [Zabbix Get](#to-work-via-zabbix-get-protocol)
-* [Debug log](#enabling-debug-log)
+## Features
 
-## Requirements
-
-Supported versions:
-
-* Zabbix 5.0+
-* Python 3.8+
-
-Tested on:
-
-* Zabbix 5.0, 6.0, 7.0 and 7.2
-* Python 3.8, 3.9, 3.10, 3.11 and 3.12
-
-Dependencies:
-
-* [aiohttp](https://github.com/aio-libs/aiohttp) (in case of async use)
+- **Complete Feature Parity**: One-to-one port of the Python library maintaining identical API
+- **TypeScript Support**: Full type safety with comprehensive type definitions
+- **Synchronous & Asynchronous**: Both sync and async implementations for all components
+- **Zabbix API**: Dynamic method creation with full API coverage
+- **Zabbix Sender**: Send values to Zabbix server/proxy with cluster support
+- **Zabbix Getter**: Retrieve values from Zabbix agents
+- **Version Compatibility**: Supports Zabbix 5.0+ (tested up to 7.2)
 
 ## Installation
 
-### Installation from PyPI
-
-Install **zabbix_utils** library using pip:
-
 ```bash
-$ pip install zabbix_utils
+npm install zabbix-utils
 ```
 
-To install the library with dependencies for asynchronous work use the following way:
+## Quick Start
 
-```bash
-$ pip install zabbix_utils[async]
+### Zabbix API (Synchronous)
+
+```typescript
+import { ZabbixAPI } from 'zabbix-utils';
+
+const api = new ZabbixAPI({
+    url: 'https://zabbix.example.com',
+    user: 'Admin',
+    password: 'zabbix'
+});
+
+// Get all hosts
+const hosts = api.host.get({
+    output: ['hostid', 'name']
+});
+
+console.log(hosts);
+api.logout();
 ```
 
-### Installation from Zabbix repository
+### Zabbix API (Asynchronous)
 
-First of all, you need to install Zabbix repository. Official Zabbix packages for Red Hat Enterprise Linux and derivatives, as well as for Debian and derivatives are available on [Zabbix website](https://www.zabbix.com/download).
+```typescript
+import { AsyncZabbixAPI } from 'zabbix-utils';
 
-**Red Hat Enterprise Linux and derivatives**
+async function main() {
+    const api = new AsyncZabbixAPI({
+        url: 'https://zabbix.example.com',
+        token: 'your-api-token'
+    });
 
-Install **zabbix_utils** library from Zabbix repository:
+    const hosts = await api.host.get({
+        output: ['hostid', 'name']
+    });
 
-```bash
-# dnf install python3-zabbix-utils
+    console.log(hosts);
+}
 ```
 
-To install additional dependencies such as aiohttp for asynchronous work use the following way:
-```bash
-# dnf install epel-release
-# dnf install python3-aiohttp
+### Zabbix Sender
+
+```typescript
+import { Sender, ItemValue } from 'zabbix-utils';
+
+const sender = new Sender({
+    server: '127.0.0.1',
+    port: 10051
+});
+
+// Send single value
+const response = sender.sendValue('host1', 'item.key', 'value', Date.now());
+
+// Send multiple values
+const items = [
+    new ItemValue('host1', 'item.key1', 10),
+    new ItemValue('host1', 'item.key2', 'test message'),
+    new ItemValue('host2', 'item.key1', -1, Date.now())
+];
+
+const bulkResponse = sender.send(items);
+console.log(bulkResponse);
 ```
 
-**Debian / Ubuntu and derivatives**
+### Zabbix Getter
 
-Install **zabbix_utils** library from Zabbix repository:
+```typescript
+import { Getter } from 'zabbix-utils';
 
-```bash
-# apt install python3-zabbix-utils
+const agent = new Getter({
+    host: '127.0.0.1',
+    port: 10050
+});
+
+const response = agent.get('system.uname');
+console.log(response.value);
 ```
-
-To install additional dependencies such as aiohttp for asynchronous work use the following way:
-```bash
-# apt install python3-aiohttp
-```
-
-### Installation from GitHub
-
-Clone the **zabbix_utils** repository:
-
-```bash
-$ git clone https://github.com/zabbix/python-zabbix-utils
-```
-
-Install **zabbix_utils** library using setup.py:
-
-```bash
-$ cd python-zabbix-utils/
-$ python3 setup.py install
-```
-
-To install dependencies use one of the ways above.
 
 ## Documentation
 
-### Use cases
+### API Reference
 
-##### To work with Zabbix API
+- [ZabbixAPI](./docs/api.md) - Synchronous API client
+- [AsyncZabbixAPI](./docs/aioapi.md) - Asynchronous API client
+- [Sender](./docs/sender.md) - Send values to Zabbix
+- [AsyncSender](./docs/aiosender.md) - Asynchronous sender
+- [Getter](./docs/getter.md) - Get values from agents
+- [AsyncGetter](./docs/aiogetter.md) - Asynchronous getter
 
-To work with Zabbix API via synchronous I/O you can import and use **zabbix_utils** library as follows:
+### Examples
 
-```python
-from zabbix_utils import ZabbixAPI
+See the [examples](./examples/) directory for comprehensive usage examples:
 
-api = ZabbixAPI(url="127.0.0.1")
-api.login(user="User", password="zabbix")
+- **Basic Usage**: Simple API, sender, and getter examples
+- **API Examples**: Authentication, template export, context management
+- **Sender Examples**: Single sending, bulk sending, cluster usage
+- **Getter Examples**: Agent data retrieval
 
-users = api.user.get(
-    output=['userid','name']
-)
+## Environment Variables
 
-for user in users:
-    print(user['name'])
+The library supports the following environment variables:
 
-api.logout()
+- `ZABBIX_URL` - Zabbix server URL
+- `ZABBIX_USER` - Username for authentication
+- `ZABBIX_PASSWORD` - Password for authentication  
+- `ZABBIX_TOKEN` - API token for authentication (Zabbix 5.4+)
+
+## Version Compatibility
+
+| Zabbix Version | Support Status |
+|----------------|----------------|
+| 5.0 LTS        | ✅ Supported   |
+| 6.0 LTS        | ✅ Supported   |
+| 7.0            | ✅ Supported   |
+| 7.2            | ✅ Supported   |
+
+## Testing
+
+```bash
+# Run all tests
+npm test
+
+# Run tests with coverage
+npm run test:coverage
+
+# Run specific test suite
+npm test -- tests/api.test.ts
+
+# Watch mode for development
+npm run test:watch
 ```
 
-To work with Zabbix API via asynchronous I/O you can use the following way:
+Current test coverage: **103 tests** across 9 test suites, all passing.
 
-```python
-import asyncio
-from zabbix_utils import AsyncZabbixAPI
+## Building
 
-async def main():
-    api = AsyncZabbixAPI(url="127.0.0.1")
-    await api.login(user="User", password="zabbix")
+```bash
+# Build TypeScript to JavaScript
+npm run build
 
-    users = await api.user.get(
-        output=['userid','name']
-    )
+# Lint code
+npm run lint
 
-    for user in users:
-        print(user['name'])
-
-    await api.logout()
-
-asyncio.run(main())
+# Fix linting issues
+npm run lint:fix
 ```
 
-You can also authenticate using an API token (supported since Zabbix 5.4):
+## Upstream Synchronization
 
-```python
-api = ZabbixAPI(url="127.0.0.1")
-api.login(token="xxxxxxxx")
+This TypeScript port maintains feature parity with the upstream Python library through automated monitoring and synchronization processes.
+
+### Current Status
+- **TypeScript Version**: 2.0.2
+- **Upstream Version**: 2.0.2 (Latest)
+- **Feature Parity**: ✅ Complete
+
+### Monitoring
+```bash
+# Check for upstream changes
+npm run sync:check
+
+# Generate detailed sync report
+npm run sync:report
+
+# Full analysis with diff files
+npm run sync:full
 ```
 
-```python
-api = AsyncZabbixAPI(url="127.0.0.1")
-await api.login(token="xxxxxxxx")
-```
-
-When token is used, calling `api.logout()` is not necessary.
-
-It is possible to specify authentication fields by the following environment variables:
-`ZABBIX_URL`, `ZABBIX_TOKEN`, `ZABBIX_USER`, `ZABBIX_PASSWORD`
-
-You can compare Zabbix API version with strings and numbers, for example:
-
-```python
-# Method to get version
-ver = api.api_version()
-print(type(ver).__name__, ver) # APIVersion 7.0.0
-
-# ZabbixAPI prototype with version
-ver = api.version
-print(type(ver).__name__, ver) # APIVersion 7.0.0
-
-# Comparing versions
-print(ver > 6.0)      # True
-print(ver != 7.0)     # False
-print(ver != "7.0.0") # False
-
-# Version additional methods
-print(ver.major)    # 7.0
-print(ver.minor)    # 0
-print(ver.is_lts()) # True
-```
-
-In case the API object or method name matches one of Python keywords, you can use the suffix `_` in their name to execute correctly, for example:
-```python
-from zabbix_utils import ZabbixAPI
-
-api = ZabbixAPI(url="127.0.0.1")
-api.login(token="xxxxxxxx")
-
-template_source = ''
-with open('template_example.xml', mode='r', encoding='utf-8') as f:
-    template_source = f.read()
-
-response = api.configuration.import_(
-    source=template_source,
-    format="xml",
-    rules={...}
-)
-
-if response:
-    print("Template imported successfully")
-```
-
-> Please, refer to the [Zabbix API Documentation](https://www.zabbix.com/documentation/current/manual/api/reference) and the [using examples](https://github.com/zabbix/python-zabbix-utils/tree/main/examples/api) for more information.
-
-##### To work via Zabbix sender protocol
-
-To send item values to a Zabbix server or a Zabbix proxy you can import and use the library as follows:
-
-```python
-from zabbix_utils import Sender
-
-sender = Sender(server='127.0.0.1', port=10051)
-response = sender.send_value('host', 'item.key', 'value', 1695713666)
-
-print(response)
-# {"processed": 1, "failed": 0, "total": 1, "time": "0.000338", "chunk": 1}
-```
-
-The asynchronous way:
-
-```python
-import asyncio
-from zabbix_utils import AsyncSender
-
-async def main():
-    sender = AsyncSender(server='127.0.0.1', port=10051)
-    response = await sender.send_value('host', 'item.key', 'value', 1695713666)
-
-    print(response)
-    # {"processed": 1, "failed": 0, "total": 1, "time": "0.000338", "chunk": 1}
-
-asyncio.run(main())
-```
-
-You can also prepare a list of item values and send all at once:
-
-```python
-from zabbix_utils import ItemValue, Sender
-
-items = [
-    ItemValue('host1', 'item.key1', 10),
-    ItemValue('host1', 'item.key2', 'test message'),
-    ItemValue('host2', 'item.key1', -1, 1695713666),
-    ItemValue('host3', 'item.key1', '{"msg":"test message"}'),
-    ItemValue('host2', 'item.key1', 0, 1695713666, 100)
-]
-
-sender = Sender(server='127.0.0.1', port=10051)
-response = sender.send(items)
-
-print(response)
-# {"processed": 5, "failed": 0, "total": 5, "time": "0.001661", "chunk": 1}
-```
-
-If you need to send values to several Zabbix clusters at once, you can do this by passing a list of Zabbix clusters:
-
-```python
-from zabbix_utils import Sender
-
-zabbix_clusters = [
-    ['zabbix.cluster1.node1', 'zabbix.cluster1.node2:10051'],
-    ['zabbix.cluster2.node1:10051', 'zabbix.cluster2.node2:20051', 'zabbix.cluster2.node3']
-]
-
-sender = Sender(clusters=zabbix_clusters)
-response = sender.send_value('host', 'item.key', 'value', 1695713666)
-
-print(response)
-# {"processed": 2, "failed": 0, "total": 2, "time": "0.000103", "chunk": 2}
-
-print(response.details)
-# {
-#     zabbix.cluster1.node1:10051: [{"processed": 1, "failed": 0, "total": 1, "time": "0.000050", "chunk": 1}],
-#     zabbix.cluster2.node2:20051: [{"processed": 1, "failed": 0, "total": 1, "time": "0.000053", "chunk": 1}]
-# }
-```
-
-In such case, the value will be sent to the first available node of each cluster.
-
-> Please, refer to the [Zabbix sender protocol](https://www.zabbix.com/documentation/current/manual/appendix/protocols/zabbix_sender) and the [using examples](https://github.com/zabbix/python-zabbix-utils/tree/main/examples/sender) for more information.
-
-##### To work via Zabbix get protocol
-
-To get a value by item key from a Zabbix agent or agent 2 via synchronous I/O the library can be imported and used as follows:
-
-```python
-from zabbix_utils import Getter
-
-agent = Getter(host='127.0.0.1', port=10050)
-resp = agent.get('system.uname')
-
-print(resp.value)
-# Linux test_server 5.15.0-3.60.5.1.el9uek.x86_64
-```
-
-The library can be used via asynchronous I/O, as in the following example:
-
-```python
-import asyncio
-from zabbix_utils import AsyncGetter
-
-async def main():
-    agent = AsyncGetter(host='127.0.0.1', port=10050)
-    resp = await agent.get('system.uname')
-
-    print(resp.value)
-    # Linux test_server 5.15.0-3.60.5.1.el9uek.x86_64
-
-asyncio.run(main())
-```
-
-> Please, refer to the [Zabbix agent protocol](https://www.zabbix.com/documentation/current/manual/appendix/protocols/zabbix_agent) and the [using examples](https://github.com/zabbix/python-zabbix-utils/tree/main/examples/get) for more information.
-
-### Enabling debug log
-
-If it needed to debug some issue with Zabbix API, sender or get you can enable the output of logging. The **zabbix_utils** library uses the default python logging module, but it doesn't log by default. You can define logging handler to see records from the library, for example:
-
-```python
-import logging
-from zabbix_utils import Getter
-
-logging.basicConfig(
-    format=u'[%(asctime)s] %(levelname)s %(message)s',
-    level=logging.DEBUG
-)
-
-agent = Getter(host='127.0.0.1', port=10050)
-resp = agent.get('system.uname')
-
-print(resp.value)
-```
-
-And then you can see records like the following:
-
-```
-[2023-10-01 12:00:01,587] DEBUG Content of the packet: b'ZBXD\x01\x0c\x00\x00\x00\x00\x00\x00\x00system.uname'
-[2023-10-01 12:00:01,722] DEBUG Zabbix response header: b'ZBXD\x01C\x00\x00\x00C\x00\x00\x00'
-[2023-10-01 12:00:01,723] DEBUG Zabbix response body: Linux test_server 5.15.0-3.60.5.1.el9uek.x86_64
-[2023-10-01 12:00:01,724] DEBUG Response from [127.0.0.1:10050]: Linux test_server 5.15.0-3.60.5.1.el9uek.x86_64
-Linux test_server 5.15.0-3.60.5.1.el9uek.x86_64
-
-```
+For detailed information about maintaining upstream parity, see [UPSTREAM_SYNC.md](./UPSTREAM_SYNC.md).
 
 ## License
-**zabbix_utils** is distributed under MIT License.
+
+This project is licensed under the MIT License - the same license as the upstream Python library.
+
+```
+MIT License
+
+Copyright (C) 2001-2023 Zabbix SIA (Original Python library)
+Copyright (C) 2024-2025 Han Yong Lim <hanyong.lim@gmail.com> (TypeScript adaptation)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+### Development Guidelines
+
+- Maintain feature parity with upstream Python library
+- Follow TypeScript best practices
+- Add tests for new functionality
+- Update documentation as needed
+- Run the full test suite before submitting
+
+## Acknowledgments
+
+- **Original Python Library**: [zabbix/python-zabbix-utils](https://github.com/zabbix/python-zabbix-utils)
+- **Zabbix SIA**: For creating and maintaining the original library
+- **TypeScript Adaptation**: Han Yong Lim <hanyong.lim@gmail.com>
+- **Contributors**: All contributors to both the original and TypeScript versions
+
+## Links
+
+- [Upstream Python Repository](https://github.com/zabbix/python-zabbix-utils)
+- [Zabbix Documentation](https://www.zabbix.com/documentation)
+- [Zabbix API Documentation](https://www.zabbix.com/documentation/current/en/manual/api)
+- [TypeScript Documentation](https://www.typescriptlang.org/docs/)
+
+---
+
+**Note**: This is an unofficial TypeScript port created by Han Yong Lim. For the official Python library, please visit [zabbix/python-zabbix-utils](https://github.com/zabbix/python-zabbix-utils).

@@ -1,6 +1,7 @@
 MIT License
 
-Copyright (C) 2001-2023 Zabbix SIA
+Copyright (C) 2001-2023 Zabbix SIA (Original Python library)
+Copyright (C) 2024-2025 Han Yong Lim <hanyong.lim@gmail.com> (TypeScript adaptation)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in

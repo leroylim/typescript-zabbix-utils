@@ -5,18 +5,20 @@ on:
   push:
     branches: [main]
     paths:
-      - '**api.py'
+      - '**api.ts'
+      - '**aioapi.ts'
   pull_request:
     branches: [main]
     paths:
-      - '**api.py'
+      - '**api.ts'
+      - '**aioapi.ts'
   workflow_dispatch:
 
 env:
   ZABBIX_BRANCH: master
   CONFIG_PATH: .github/configs/
-  SYNC_FILE: integration_api_test.py
-  ASYNC_FILE: integration_aioapi_test.py
+  SYNC_FILE: integration_api_test.js
+  ASYNC_FILE: integration_aioapi_test.js
 
 jobs:
   integration:
@@ -65,13 +67,21 @@ jobs:
           cat images.sql | sudo -u zabbix psql zabbix
           cat data.sql | sudo -u zabbix psql zabbix
           sudo apache2ctl start
-      - name: Install python3
+      - name: Start Zabbix server
         run: |
-          sudo apt-get install -y python3 python3-pip python-is-python3
-          pip install -r ./requirements.txt
+          cd /tmp/zabbix-branch
+          sudo ./src/zabbix_server/zabbix_server -c ./conf/zabbix_server.conf
+      - name: Start Zabbix agent
+        run: |
+          cd /tmp/zabbix-branch
+          sudo ./src/zabbix_agent/zabbix_agentd -c ./conf/zabbix_agentd.conf
+      - name: Install Node.js
+        run: |
+          sudo apt-get install -y nodejs npm
+          npm ci
       - name: Wait for Zabbix API
         run: |
-          python ./.github/scripts/wait_instance_zabbix.py
+          node ./.github/scripts/wait_instance_zabbix.js
       - name: Print Zabbix version
         continue-on-error: true
         run: |
@@ -79,11 +89,11 @@ jobs:
       - name: Integration synchronous test
         continue-on-error: true
         run: |
-          python ./.github/scripts/$SYNC_FILE 2>/tmp/integration_sync.log >/dev/null
+          node ./.github/scripts/$SYNC_FILE 2>/tmp/integration_sync.log >/dev/null
       - name: Integration asynchronous test
         continue-on-error: true
         run: |
-          python ./.github/scripts/$ASYNC_FILE 2>/tmp/integration_async.log >/dev/null
+          node ./.github/scripts/$ASYNC_FILE 2>/tmp/integration_async.log >/dev/null
       - name: Send report
         env:
           TBOT_TOKEN: ${{ secrets.TBOT_TOKEN }}
@@ -91,7 +101,7 @@ jobs:
           SUBJECT: Zabbix API integration test FAIL
         run: |
           err=0
-          tail -n1 /tmp/integration_sync.log | grep "OK" 1>/dev/null || tail /tmp/integration_sync.log | python ./.github/scripts/telegram_msg.py 2>/dev/null | err=1
-          tail -n1 /tmp/integration_async.log | grep "OK" 1>/dev/null || tail /tmp/integration_async.log | python ./.github/scripts/telegram_msg.py 2>/dev/null | err=1
+          tail -n1 /tmp/integration_sync.log | grep "OK" 1>/dev/null || tail /tmp/integration_sync.log | node ./.github/scripts/telegram_msg.js 2>/dev/null | err=1
+          tail -n1 /tmp/integration_async.log | grep "OK" 1>/dev/null || tail /tmp/integration_async.log | node ./.github/scripts/telegram_msg.js 2>/dev/null | err=1
           if [ "$err" = 1 ]; then exit 1; fi
 

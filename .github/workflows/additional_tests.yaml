@@ -11,7 +11,7 @@ on:
 env:
   ZABBIX_BRANCH: master
   CONFIG_PATH: .github/configs/
-  TEST_FILE: additional_api_tests.py
+  TEST_FILE: additional_api_tests.js
 
 jobs:
   importing-tests:
@@ -20,37 +20,37 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: Install Python
+      - name: Install Node.js (for importing tests)
         run: |
-          sudo apt update && sudo apt-get install -y python3 python3-pip python-is-python3
+          sudo apt-get install -y nodejs npm
       - name: Prepare environment
         run: |
           touch /tmp/importing.log
-      - name: Check import of sync without requirements
+      - name: Check import of sync without dependencies
         continue-on-error: true
         env:
           TBOT_TOKEN: ${{ secrets.TBOT_TOKEN }}
           TBOT_CHAT: ${{ vars.TBOT_CHAT }}
-          SUBJECT: Importing test without requirements FAIL
+          SUBJECT: Importing test without dependencies FAIL
         run: |
           bash ./.github/scripts/library_import_tests.sh "sync" "ZabbixAPI" "Unable to connect to" > /tmp/importing.log
-      - name: Check import of async without requirements
+      - name: Check import of async without dependencies
         continue-on-error: true
         env:
           TBOT_TOKEN: ${{ secrets.TBOT_TOKEN }}
           TBOT_CHAT: ${{ vars.TBOT_CHAT }}
-          SUBJECT: Importing test without requirements FAIL
+          SUBJECT: Importing test without dependencies FAIL
         run: |
           bash ./.github/scripts/library_import_tests.sh "async" "AsyncZabbixAPI" "ModuleNotFoundError:" > /tmp/importing.log
-      - name: Install requirements
+      - name: Install dependencies
         run: |
-          pip install -r ./requirements.txt
-      - name: Check import of async with requirements
+          npm ci
+      - name: Check import of async with dependencies
         continue-on-error: true
         env:
           TBOT_TOKEN: ${{ secrets.TBOT_TOKEN }}
           TBOT_CHAT: ${{ vars.TBOT_CHAT }}
-          SUBJECT: Importing tests with requirements FAIL
+          SUBJECT: Importing tests with dependencies FAIL
         run: |
           bash ./.github/scripts/library_import_tests.sh "async" "AsyncZabbixAPI" "Unable to connect to" > /tmp/importing.log
       - name: Raise an exception
@@ -112,19 +112,19 @@ jobs:
         run: |
           sudo apache2ctl start
           sudo nginx -g "daemon on; master_process on;"
-      - name: Install python3
+      - name: Install Node.js
         run: |
-          sudo apt-get install -y python3 python3-pip python-is-python3
-          pip install -r ./requirements.txt
+          sudo apt-get install -y nodejs npm
+          npm ci
       - name: Run tests
         continue-on-error: true
         run: |
           sleep 5
-          python ./.github/scripts/$TEST_FILE 2>/tmp/additional.log >/dev/null
+          node ./.github/scripts/$TEST_FILE 2>/tmp/additional.log >/dev/null
       - name: Send report
         env:
           TBOT_TOKEN: ${{ secrets.TBOT_TOKEN }}
           TBOT_CHAT: ${{ vars.TBOT_CHAT }}
           SUBJECT: Zabbix API additional tests FAIL
         run: |
-          tail -n1 /tmp/additional.log | grep "OK" 1>/dev/null || tail /tmp/additional.log | python ./.github/scripts/telegram_msg.py | exit 1
+          tail -n1 /tmp/additional.log | grep "OK" 1>/dev/null || tail /tmp/additional.log | node ./.github/scripts/telegram_msg.js | exit 1

@@ -5,19 +5,21 @@ on:
   push:
     branches: [main]
     paths:
-      - '**getter.py'
+      - '**getter.ts'
+      - '**aiogetter.ts'
   pull_request:
     branches: [main]
     paths:
-      - '**getter.py'
+      - '**getter.ts'
+      - '**aiogetter.ts'
   workflow_dispatch:
 
 env:
   ZABBIX_VERSION: '6.0'
   ZABBIX_BRANCH: master
   CONFIG_PATH: .github/configs/
-  SYNC_FILE: integration_getter_test.py
-  ASYNC_FILE: integration_aiogetter_test.py
+  SYNC_FILE: integration_getter_test.js
+  ASYNC_FILE: integration_aiogetter_test.js
 
 jobs:
   integration:
@@ -38,18 +40,18 @@ jobs:
       - name: Start Zabbix agent
         run: |
           sudo zabbix_agentd -c /etc/zabbix/zabbix_agentd.conf
-      - name: Install python3
+      - name: Install Node.js
         run: |
-          sudo apt-get install -y python3 python3-pip python-is-python3
-          pip install -r ./requirements.txt
+          sudo apt-get install -y nodejs npm
+          npm ci
       - name: Integration synchronous test
         continue-on-error: true
         run: |
-          python ./.github/scripts/$SYNC_FILE 2>/tmp/integration_sync.log >/dev/null
+          node ./.github/scripts/$SYNC_FILE 2>/tmp/integration_sync.log >/dev/null
       - name: Integration asynchronous test
         continue-on-error: true
         run: |
-          python ./.github/scripts/$ASYNC_FILE 2>/tmp/integration_async.log >/dev/null
+          node ./.github/scripts/$ASYNC_FILE 2>/tmp/integration_async.log >/dev/null
       - name: Send report
         env:
           TBOT_TOKEN: ${{ secrets.TBOT_TOKEN }}
@@ -57,6 +59,6 @@ jobs:
           SUBJECT: Zabbix get integration test FAIL
         run: |
           err=0
-          tail -n1 /tmp/integration_sync.log | grep "OK" 1>/dev/null || tail /tmp/integration_sync.log | python ./.github/scripts/telegram_msg.py 2>/dev/null | err=1
-          tail -n1 /tmp/integration_async.log | grep "OK" 1>/dev/null || tail /tmp/integration_async.log | python ./.github/scripts/telegram_msg.py 2>/dev/null | err=1
+          tail -n1 /tmp/integration_sync.log | grep "OK" 1>/dev/null || tail /tmp/integration_sync.log | node ./.github/scripts/telegram_msg.js 2>/dev/null | err=1
+          tail -n1 /tmp/integration_async.log | grep "OK" 1>/dev/null || tail /tmp/integration_async.log | node ./.github/scripts/telegram_msg.js 2>/dev/null | err=1
           if [ "$err" = 1 ]; then exit 1; fi

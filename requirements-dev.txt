@@ -1,3 +1,0 @@
-flake8>=3.0.0
-coverage
-aiohttp[speedups]>=3,<4

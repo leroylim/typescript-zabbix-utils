@@ -3,32 +3,33 @@ run-name: Check new Zabbix release
 
 on:
   schedule:
-    - cron: "0 0 * * *"
+    - cron: '0 12 * * *'
   workflow_dispatch:
 
+env:
+  BRANCHES_URL: https://git.zabbix.com/rest/api/1.0/projects/ZBX/repos/zabbix/branches
+  LIBREPO_URL: https://github.com/leroylim/typescript-zabbix-utils
+  MANUAL_REPO: https://github.com/leroylim/typescript-zabbix-utils/blob/main/UPSTREAM_SYNC.md
+
 jobs:
-  check-release:
-    name: Check Zabbix release
+  check:
+    name: Check new release
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Prepare environment
-      run: |
-        sudo apt-get install -y python3 python3-pip python-is-python3
-        pip install -r ./requirements.txt
-    - name: Check new Zabbix release
-      env:
-        BRANCHES_URL: ${{ vars.BRANCHES_URL }}
-        LIBREPO_URL: ${{ vars.LIBREPO_URL }}
-        MANUAL_REPO: ${{ vars.MANUAL_REPO }}
-      run: |
-        python ./.github/scripts/check_new_zabbx_release.py 2>/tmp/check_release.log || echo
-    - name: Send report
-      env:
-        TBOT_TOKEN: ${{ secrets.TBOT_TOKEN }}
-        TBOT_CHAT: ${{ vars.TBOT_CHAT }}
-        TBOT_FORMAT: html
-        SUBJECT: zabbix_utils repo requires update due new Zabbix release
-      run: |
-        tail /tmp/check_release.log | python ./.github/scripts/telegram_msg.py
+      - uses: actions/checkout@v4
+      - name: Set up Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: 'npm'
+      - name: Install dependencies
+        run: |
+          npm ci
+      - name: Check new Zabbix release
+        env:
+          BRANCHES_URL: ${{ env.BRANCHES_URL }}
+          LIBREPO_URL: ${{ env.LIBREPO_URL }}
+          MANUAL_REPO: ${{ env.MANUAL_REPO }}
+        run: |
+          node ./.github/scripts/check_new_zabbx_release.js

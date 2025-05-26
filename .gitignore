@@ -2,21 +2,53 @@
 .vscode
 .idea
 
-# Compiled
-__pycache__/
-*.py[cod]
-*$py.class
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# Packaging
-build/
-develop-eggs/
+# TypeScript
 dist/
-*.egg-info/
+*.tsbuildinfo
+
+# Testing
+coverage/
+.nyc_output
 
 # Environments
 .env
-.venv
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-# Coverage
-htmlcov/
-.coverage
+# Logs
+logs
+*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Temporary files
+.tmp/
+temp/
+upstream-temp/
+.github/upstream-check/
+.github/scripts/src/
+diffs/
+
+# GitHub Scripts Build Output
+.github/scripts/src/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
