@@ -348,11 +348,15 @@ export class ZabbixAPI {
                 await this.apiVersion();
             }
             
+            // For Zabbix 7.2+, always use Authorization header
+            if (this.version.greaterThanOrEqual(7.2)) {
+                headers["Authorization"] = `Bearer ${this.__sessionId}`;
+            }
             // For token-based authentication, use Bearer header (Zabbix 6.4+)
-            if (this.__useToken) {
+            else if (this.__useToken) {
                 headers["Authorization"] = `Bearer ${this.__sessionId}`;
             } 
-            // For session-based authentication, use auth field (all versions)
+            // For session-based authentication on older versions, use auth field
             else {
                 requestJson.auth = this.__sessionId;
             }

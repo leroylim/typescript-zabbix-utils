@@ -6,7 +6,7 @@
 
 import { ZabbixAPI, AsyncZabbixAPI, Sender, Getter, APIVersion, ItemValue } from '../../dist';
 
-const ZABBIX_URL = process.env.ZABBIX_URL || '127.0.0.1';
+const ZABBIX_URL = process.env.ZABBIX_URL || 'http://localhost';
 const ZABBIX_USER = process.env.ZABBIX_USER || 'Admin';
 const ZABBIX_PASSWORD = process.env.ZABBIX_PASSWORD || 'zabbix';
 
@@ -36,7 +36,7 @@ class CompatibilityAPITest6 {
 
         await this.zapi.login(undefined, this.user, this.password);
 
-        const sessionId = (this.zapi as any).__session_id;
+        const sessionId = (this.zapi as any).__sessionId;
         if (!sessionId) {
             throw new Error('Login by user and password was going wrong');
         }
@@ -58,6 +58,7 @@ class CompatibilityAPITest6 {
 
         try {
             // In Zabbix 6.0+, token authentication should be supported
+            // But the test token may not exist, so we'll just test the API capability
             await this.zapi.login(this.token);
             
             const users = await (this.zapi as any).user.get({
@@ -71,7 +72,9 @@ class CompatibilityAPITest6 {
             await this.zapi.logout();
             console.log('✓ Zabbix 6.0 token auth test passed');
         } catch (error) {
-            console.log('⚠ Token auth may not be configured or supported in this instance');
+            // Token auth may not be configured or the test token may not exist
+            // This is not a failure for compatibility testing
+            console.log('⚠ Token auth test skipped - token may not be configured');
         }
     }
 
@@ -168,7 +171,9 @@ class CompatibilityAsyncAPITest6 {
             
             console.log('✓ Zabbix 6.0 async token auth test passed');
         } catch (error) {
-            console.log('⚠ Async token auth may not be configured or supported in this instance');
+            // Token auth may not be configured or the test token may not exist
+            // This is not a failure for compatibility testing
+            console.log('⚠ Async token auth test skipped - token may not be configured');
         }
     }
 
