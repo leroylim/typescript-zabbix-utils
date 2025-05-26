@@ -125,7 +125,7 @@ export class ZabbixAPI {
         // Return a proxy to handle dynamic method calls
         return new Proxy(this, {
             get(target, prop) {
-                if (typeof prop === 'string' && !(prop in target)) {
+                if (typeof prop === 'string' && !(prop in target) && !prop.startsWith('__')) {
                     return new Proxy(new APIObject(prop, target), {
                         get(apiObj, method) {
                             if (typeof method === 'string') {
