@@ -1,18 +1,19 @@
 #!/usr/bin/env node
 "use strict";
-// Copyright (C) 2001-2023 Zabbix SIA
+// Copyright (C) 2001-2023 Zabbix SIA (Original Python library)
+// Copyright (C) 2024-2025 Han Yong Lim <hanyong.lim@gmail.com> (TypeScript adaptation)
 //
 // Zabbix SIA licenses this file under the MIT License.
 // See the LICENSE file in the project root for more information.
 Object.defineProperty(exports, "__esModule", { value: true });
-const src_1 = require("../../src");
+const dist_1 = require("../../dist");
 async function waitForZabbixAPI() {
     const maxAttempts = 20;
     const delayMs = 5000; // 5 seconds
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
         try {
             console.log(`Attempt ${attempt}/${maxAttempts}: Checking Zabbix API...`);
-            const zapi = new src_1.ZabbixAPI({
+            const zapi = new dist_1.ZabbixAPI({
                 url: 'http://localhost',
                 user: 'Admin',
                 password: 'zabbix',

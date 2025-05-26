@@ -5,7 +5,7 @@
 // Zabbix SIA licenses this file under the MIT License.
 // See the LICENSE file in the project root for more information.
 Object.defineProperty(exports, "__esModule", { value: true });
-const src_1 = require("../../src");
+const dist_1 = require("../../dist");
 const ZABBIX_URL = process.env.ZABBIX_URL || '127.0.0.1';
 const ZABBIX_USER = process.env.ZABBIX_USER || 'Admin';
 const ZABBIX_PASSWORD = process.env.ZABBIX_PASSWORD || 'zabbix';
@@ -18,7 +18,7 @@ class CompatibilityAPITest {
         this.token = 'token';
     }
     setUp() {
-        this.zapi = new src_1.ZabbixAPI({
+        this.zapi = new dist_1.ZabbixAPI({
             url: this.url
         });
     }
@@ -26,11 +26,11 @@ class CompatibilityAPITest {
         console.log('Testing Zabbix 5.0 classic auth...');
         if (!this.zapi)
             throw new Error('ZabbixAPI not initialized');
-        if (!(this.zapi instanceof src_1.ZabbixAPI)) {
+        if (!(this.zapi instanceof dist_1.ZabbixAPI)) {
             throw new Error('Creating ZabbixAPI object was going wrong');
         }
         const version = this.zapi.apiVersion();
-        if (!(version instanceof src_1.APIVersion)) {
+        if (!(version instanceof dist_1.APIVersion)) {
             throw new Error('Version getting was going wrong');
         }
         await this.zapi.login(this.user, this.password);
@@ -101,7 +101,7 @@ class CompatibilitySenderTest {
         this.itemkey = `${this.constructor.name}`;
     }
     setUp() {
-        this.sender = new src_1.Sender({
+        this.sender = new dist_1.Sender({
             server: this.ip,
             port: this.port,
             chunkSize: this.chunkSize
@@ -109,7 +109,7 @@ class CompatibilitySenderTest {
     }
     async prepareItems() {
         console.log('Preparing test items for sender...');
-        const zapi = new src_1.ZabbixAPI({
+        const zapi = new dist_1.ZabbixAPI({
             url: ZABBIX_URL,
             skipVersionCheck: true
         });
@@ -175,12 +175,12 @@ class CompatibilitySenderTest {
         // Wait a bit for items to be ready
         await new Promise(resolve => setTimeout(resolve, 10000));
         const items = [
-            new src_1.ItemValue(this.hostname, this.itemkey, '10'),
-            new src_1.ItemValue(this.hostname, this.itemkey, 'test message'),
-            new src_1.ItemValue(this.hostname, 'item_key1', '-1', 1695713666),
-            new src_1.ItemValue(this.hostname, 'item_key2', '{"msg":"test message"}'),
-            new src_1.ItemValue(this.hostname, this.itemkey, '0', 1695713666, 100),
-            new src_1.ItemValue(this.hostname, this.itemkey, '5.5', 1695713666)
+            new dist_1.ItemValue(this.hostname, this.itemkey, '10'),
+            new dist_1.ItemValue(this.hostname, this.itemkey, 'test message'),
+            new dist_1.ItemValue(this.hostname, 'item_key1', '-1', 1695713666),
+            new dist_1.ItemValue(this.hostname, 'item_key2', '{"msg":"test message"}'),
+            new dist_1.ItemValue(this.hostname, this.itemkey, '0', 1695713666, 100),
+            new dist_1.ItemValue(this.hostname, this.itemkey, '5.5', 1695713666)
         ];
         const resp = await this.sender.send(items);
         if (!resp || typeof resp.total !== 'number') {
@@ -211,7 +211,7 @@ class CompatibilityGetTest {
         this.port = 10050;
     }
     setUp() {
-        this.agent = new src_1.Getter({
+        this.agent = new dist_1.Getter({
             host: this.host,
             port: this.port
         });

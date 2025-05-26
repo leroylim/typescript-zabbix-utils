@@ -4,7 +4,7 @@
 // Zabbix SIA licenses this file under the MIT License.
 // See the LICENSE file in the project root for more information.
 
-import { AsyncGetter, AgentResponse } from '../../src';
+import { AsyncGetter, AgentResponse } from '../../dist';
 
 class IntegrationAsyncGetterTest {
     private host: string;

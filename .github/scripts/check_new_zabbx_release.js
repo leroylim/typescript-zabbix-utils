@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 "use strict";
-// Copyright (C) 2001-2023 Zabbix SIA
+// Copyright (C) 2001-2023 Zabbix SIA (Original Python library)
+// Copyright (C) 2024-2025 Han Yong Lim <hanyong.lim@gmail.com> (TypeScript adaptation)
 //
 // Zabbix SIA licenses this file under the MIT License.
 // See the LICENSE file in the project root for more information.

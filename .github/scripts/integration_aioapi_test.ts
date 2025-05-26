@@ -4,7 +4,7 @@
 // Zabbix SIA licenses this file under the MIT License.
 // See the LICENSE file in the project root for more information.
 
-import { AsyncZabbixAPI, APIVersion } from '../../src';
+import { AsyncZabbixAPI, APIVersion } from '../../dist';
 
 class IntegrationAsyncAPITest {
     private url: string;

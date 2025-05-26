@@ -5,7 +5,7 @@
 // Zabbix SIA licenses this file under the MIT License.
 // See the LICENSE file in the project root for more information.
 Object.defineProperty(exports, "__esModule", { value: true });
-const src_1 = require("../../src");
+const dist_1 = require("../../dist");
 const ZABBIX_URL = process.env.ZABBIX_URL || '127.0.0.1';
 const ZABBIX_USER = process.env.ZABBIX_USER || 'Admin';
 const ZABBIX_PASSWORD = process.env.ZABBIX_PASSWORD || 'zabbix';
@@ -18,7 +18,7 @@ class CompatibilityAPITest7 {
         this.token = 'test_token_for_zabbix_7';
     }
     setUp() {
-        this.zapi = new src_1.ZabbixAPI({
+        this.zapi = new dist_1.ZabbixAPI({
             url: this.url
         });
     }
@@ -112,7 +112,7 @@ class CompatibilityAsyncAPITest7 {
         this.token = 'test_token_for_zabbix_7';
     }
     async setUp() {
-        this.zapi = new src_1.AsyncZabbixAPI({
+        this.zapi = new dist_1.AsyncZabbixAPI({
             url: this.url
         });
     }

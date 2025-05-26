@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 "use strict";
-// Copyright (C) 2001-2023 Zabbix SIA
+// Copyright (C) 2001-2023 Zabbix SIA (Original Python library)
+// Copyright (C) 2024-2025 Han Yong Lim <hanyong.lim@gmail.com> (TypeScript adaptation)
 //
 // Zabbix SIA licenses this file under the MIT License.
 // See the LICENSE file in the project root for more information.
 Object.defineProperty(exports, "__esModule", { value: true });
-const src_1 = require("../../src");
+const dist_1 = require("../../dist");
 const ZABBIX_URL = process.env.ZABBIX_URL || 'https://127.0.0.1:443';
 const ZABBIX_USER = process.env.ZABBIX_USER || 'Admin';
 const ZABBIX_PASSWORD = process.env.ZABBIX_PASSWORD || 'zabbix';
@@ -19,7 +20,7 @@ class CustomCertAPITest {
     async setUp() {
         // For TypeScript version, we'll use validateCerts: false for testing
         // This is equivalent to the Python SSL context bypass
-        this.api = new src_1.ZabbixAPI({
+        this.api = new dist_1.ZabbixAPI({
             url: this.url,
             skipVersionCheck: true,
             validateCerts: false
@@ -41,7 +42,7 @@ class CustomCertAPITest {
         if (!this.api)
             throw new Error('API not initialized');
         const version = this.api.apiVersion();
-        if (!(version instanceof src_1.APIVersion)) {
+        if (!(version instanceof dist_1.APIVersion)) {
             throw new Error('Version getting was going wrong');
         }
         console.log(`✓ Custom cert login successful, version: ${version}`);
@@ -112,7 +113,7 @@ class CustomCertAsyncAPITest {
     }
     async setUp() {
         // For async API, also use validateCerts: false
-        this.api = new src_1.AsyncZabbixAPI({
+        this.api = new dist_1.AsyncZabbixAPI({
             url: this.url,
             skipVersionCheck: true,
             validateCerts: false
@@ -134,7 +135,7 @@ class CustomCertAsyncAPITest {
         if (!this.api)
             throw new Error('Async API not initialized');
         const version = await this.api.apiVersion();
-        if (!(version instanceof src_1.APIVersion)) {
+        if (!(version instanceof dist_1.APIVersion)) {
             throw new Error('Version getting was going wrong');
         }
         console.log(`✓ Async custom cert login successful, version: ${version}`);

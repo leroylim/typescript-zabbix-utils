@@ -5,7 +5,7 @@
 // Zabbix SIA licenses this file under the MIT License.
 // See the LICENSE file in the project root for more information.
 Object.defineProperty(exports, "__esModule", { value: true });
-const src_1 = require("../../src");
+const dist_1 = require("../../dist");
 class IntegrationAPITest {
     constructor() {
         this.zapi = null;
@@ -14,7 +14,7 @@ class IntegrationAPITest {
         this.password = 'zabbix';
     }
     async setUp() {
-        this.zapi = new src_1.ZabbixAPI({
+        this.zapi = new dist_1.ZabbixAPI({
             url: this.url,
             user: this.user,
             password: this.password,
@@ -31,11 +31,11 @@ class IntegrationAPITest {
         if (!this.zapi) {
             throw new Error('ZabbixAPI not initialized');
         }
-        if (!(this.zapi instanceof src_1.ZabbixAPI)) {
+        if (!(this.zapi instanceof dist_1.ZabbixAPI)) {
             throw new Error('Login was going wrong');
         }
         const version = this.zapi.apiVersion();
-        if (!(version instanceof src_1.APIVersion)) {
+        if (!(version instanceof dist_1.APIVersion)) {
             throw new Error('Version getting was going wrong');
         }
         console.log('✓ Login test passed');

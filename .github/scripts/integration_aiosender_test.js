@@ -5,7 +5,7 @@
 // Zabbix SIA licenses this file under the MIT License.
 // See the LICENSE file in the project root for more information.
 Object.defineProperty(exports, "__esModule", { value: true });
-const src_1 = require("../../src");
+const dist_1 = require("../../dist");
 class IntegrationAsyncSenderTest {
     constructor() {
         this.sender = null;
@@ -13,7 +13,7 @@ class IntegrationAsyncSenderTest {
         this.port = 10051;
     }
     async setUp() {
-        this.sender = new src_1.AsyncSender({
+        this.sender = new dist_1.AsyncSender({
             server: this.host,
             port: this.port
         });
@@ -26,9 +26,9 @@ class IntegrationAsyncSenderTest {
         if (!this.sender) {
             throw new Error('AsyncSender not initialized');
         }
-        const item = new src_1.ItemValue('test_host', 'test.key', 'test_value');
+        const item = new dist_1.ItemValue('test_host', 'test.key', 'test_value');
         const result = await this.sender.send([item]);
-        if (!(result instanceof src_1.TrapperResponse)) {
+        if (!(result instanceof dist_1.TrapperResponse)) {
             throw new Error('Unexpected response type');
         }
         if (result.total === 0) {
@@ -42,12 +42,12 @@ class IntegrationAsyncSenderTest {
             throw new Error('AsyncSender not initialized');
         }
         const items = [
-            new src_1.ItemValue('test_host', 'test.key1', 'value1'),
-            new src_1.ItemValue('test_host', 'test.key2', 'value2'),
-            new src_1.ItemValue('test_host', 'test.key3', 'value3')
+            new dist_1.ItemValue('test_host', 'test.key1', 'value1'),
+            new dist_1.ItemValue('test_host', 'test.key2', 'value2'),
+            new dist_1.ItemValue('test_host', 'test.key3', 'value3')
         ];
         const result = await this.sender.send(items);
-        if (!(result instanceof src_1.TrapperResponse)) {
+        if (!(result instanceof dist_1.TrapperResponse)) {
             throw new Error('Unexpected response type');
         }
         if (result.total !== items.length) {
@@ -61,13 +61,13 @@ class IntegrationAsyncSenderTest {
             throw new Error('AsyncSender not initialized');
         }
         const promises = [
-            this.sender.send([new src_1.ItemValue('test_host', 'concurrent.key1', 'value1')]),
-            this.sender.send([new src_1.ItemValue('test_host', 'concurrent.key2', 'value2')]),
-            this.sender.send([new src_1.ItemValue('test_host', 'concurrent.key3', 'value3')])
+            this.sender.send([new dist_1.ItemValue('test_host', 'concurrent.key1', 'value1')]),
+            this.sender.send([new dist_1.ItemValue('test_host', 'concurrent.key2', 'value2')]),
+            this.sender.send([new dist_1.ItemValue('test_host', 'concurrent.key3', 'value3')])
         ];
         const results = await Promise.all(promises);
         for (const result of results) {
-            if (!(result instanceof src_1.TrapperResponse) || result.total === 0) {
+            if (!(result instanceof dist_1.TrapperResponse) || result.total === 0) {
                 throw new Error('Concurrent send failed');
             }
         }
@@ -80,10 +80,10 @@ class IntegrationAsyncSenderTest {
         }
         const items = [];
         for (let i = 0; i < 10; i++) {
-            items.push(new src_1.ItemValue('test_host', `batch.key${i}`, `value${i}`));
+            items.push(new dist_1.ItemValue('test_host', `batch.key${i}`, `value${i}`));
         }
         const result = await this.sender.send(items);
-        if (!(result instanceof src_1.TrapperResponse)) {
+        if (!(result instanceof dist_1.TrapperResponse)) {
             throw new Error('Unexpected response type');
         }
         if (result.total !== items.length) {

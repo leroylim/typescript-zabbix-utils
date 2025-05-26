@@ -4,7 +4,7 @@
 // Zabbix SIA licenses this file under the MIT License.
 // See the LICENSE file in the project root for more information.
 
-import { ZabbixAPI, AsyncZabbixAPI, APIVersion } from '../../src';
+import { ZabbixAPI, AsyncZabbixAPI, APIVersion } from '../../dist';
 
 const ZABBIX_URL = process.env.ZABBIX_URL || 'https://127.0.0.1:443';
 const ZABBIX_USER = process.env.ZABBIX_USER || 'Admin';

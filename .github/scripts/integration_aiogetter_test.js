@@ -5,7 +5,7 @@
 // Zabbix SIA licenses this file under the MIT License.
 // See the LICENSE file in the project root for more information.
 Object.defineProperty(exports, "__esModule", { value: true });
-const src_1 = require("../../src");
+const dist_1 = require("../../dist");
 class IntegrationAsyncGetterTest {
     constructor() {
         this.getter = null;
@@ -13,7 +13,7 @@ class IntegrationAsyncGetterTest {
         this.port = 10050;
     }
     async setUp() {
-        this.getter = new src_1.AsyncGetter({
+        this.getter = new dist_1.AsyncGetter({
             host: this.host,
             port: this.port
         });
@@ -27,7 +27,7 @@ class IntegrationAsyncGetterTest {
             throw new Error('AsyncGetter not initialized');
         }
         const result = await this.getter.get('agent.ping');
-        if (result instanceof src_1.AgentResponse) {
+        if (result instanceof dist_1.AgentResponse) {
             if (result.value !== '1') {
                 throw new Error('Agent ping failed');
             }
@@ -43,7 +43,7 @@ class IntegrationAsyncGetterTest {
             throw new Error('AsyncGetter not initialized');
         }
         const result = await this.getter.get('agent.version');
-        if (result instanceof src_1.AgentResponse) {
+        if (result instanceof dist_1.AgentResponse) {
             if (!result.value || result.value.length === 0) {
                 throw new Error('Agent version failed');
             }
@@ -59,7 +59,7 @@ class IntegrationAsyncGetterTest {
             throw new Error('AsyncGetter not initialized');
         }
         const result = await this.getter.get('system.uname');
-        if (result instanceof src_1.AgentResponse) {
+        if (result instanceof dist_1.AgentResponse) {
             if (!result.value || result.value.length === 0) {
                 throw new Error('System uname failed');
             }
@@ -81,7 +81,7 @@ class IntegrationAsyncGetterTest {
         ];
         const results = await Promise.all(promises);
         for (const result of results) {
-            if (!(result instanceof src_1.AgentResponse) || !result.value) {
+            if (!(result instanceof dist_1.AgentResponse) || !result.value) {
                 throw new Error('Concurrent request failed');
             }
         }
@@ -94,7 +94,7 @@ class IntegrationAsyncGetterTest {
         }
         try {
             const result = await this.getter.get('invalid.key.that.does.not.exist');
-            if (result instanceof src_1.AgentResponse && result.error) {
+            if (result instanceof dist_1.AgentResponse && result.error) {
                 // Expected to have an error
                 console.log('✓ Async invalid key test passed');
             }

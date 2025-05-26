@@ -45,6 +45,10 @@ jobs:
         run: |
           sudo apt-get install -y nodejs npm
           npm ci
+      - name: Build TypeScript
+        run: |
+          npm run build
+      - name: Wait for Zabbix API
       - name: Integration synchronous test
         continue-on-error: true
         run: |

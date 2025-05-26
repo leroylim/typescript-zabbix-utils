@@ -5,7 +5,7 @@
 // Zabbix SIA licenses this file under the MIT License.
 // See the LICENSE file in the project root for more information.
 
-import { ZabbixAPI, AsyncZabbixAPI, APIVersion } from '../../src';
+import { ZabbixAPI, AsyncZabbixAPI, APIVersion } from '../../dist';
 import * as https from 'https';
 import * as fs from 'fs';
 

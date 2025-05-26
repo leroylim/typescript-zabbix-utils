@@ -4,7 +4,7 @@
 // Zabbix SIA licenses this file under the MIT License.
 // See the LICENSE file in the project root for more information.
 
-import { AsyncSender, ItemValue, TrapperResponse } from '../../src';
+import { AsyncSender, ItemValue, TrapperResponse } from '../../dist';
 
 class IntegrationAsyncSenderTest {
     private host: string;

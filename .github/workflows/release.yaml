@@ -21,11 +21,9 @@ jobs:
           cache: 'npm'
           registry-url: 'https://registry.npmjs.org'
       - name: Install dependencies
-        run: |
-          npm ci
-      - name: Build package
-        run: |
-          npm run build
+        run: npm ci
+      - name: Build TypeScript
+        run: npm run build
       - name: Set version env
         run: |
           echo "LIBRARY_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV

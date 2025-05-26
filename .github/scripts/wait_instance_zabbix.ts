@@ -5,7 +5,7 @@
 // Zabbix SIA licenses this file under the MIT License.
 // See the LICENSE file in the project root for more information.
 
-import { ZabbixAPI } from '../../src';
+import { ZabbixAPI } from '../../dist';
 
 async function waitForZabbixAPI(): Promise<void> {
     const maxAttempts = 20;

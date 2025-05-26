@@ -45,6 +45,12 @@ jobs:
       - name: Install dependencies
         run: |
           npm ci
+      - name: Build TypeScript
+        run: |
+          npm run build
+      - name: Wait for Zabbix API
+        run: |
+          sleep 5
       - name: Check import of async with dependencies
         continue-on-error: true
         env:
@@ -116,6 +122,12 @@ jobs:
         run: |
           sudo apt-get install -y nodejs npm
           npm ci
+      - name: Build TypeScript
+        run: |
+          npm run build
+      - name: Wait for Zabbix API
+        run: |
+          sleep 5
       - name: Run tests
         continue-on-error: true
         run: |

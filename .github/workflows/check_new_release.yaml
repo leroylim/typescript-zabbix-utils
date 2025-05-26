@@ -24,9 +24,10 @@ jobs:
           node-version: "18"
           cache: 'npm'
       - name: Install dependencies
-        run: |
-          npm ci
-      - name: Check new Zabbix release
+        run: npm ci
+      - name: Build TypeScript
+        run: npm run build
+      - name: Check for new Zabbix release
         env:
           BRANCHES_URL: ${{ env.BRANCHES_URL }}
           LIBREPO_URL: ${{ env.LIBREPO_URL }}

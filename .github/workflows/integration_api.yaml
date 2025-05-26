@@ -79,6 +79,9 @@ jobs:
         run: |
           sudo apt-get install -y nodejs npm
           npm ci
+      - name: Build TypeScript
+        run: |
+          npm run build
       - name: Wait for Zabbix API
         run: |
           node ./.github/scripts/wait_instance_zabbix.js

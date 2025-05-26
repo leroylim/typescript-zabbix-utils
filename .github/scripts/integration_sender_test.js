@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 "use strict";
-// Copyright (C) 2001-2023 Zabbix SIA
+// Copyright (C) 2001-2023 Zabbix SIA (Original Python library)
+// Copyright (C) 2024-2025 Han Yong Lim <hanyong.lim@gmail.com> (TypeScript adaptation)
 //
 // Zabbix SIA licenses this file under the MIT License.
 // See the LICENSE file in the project root for more information.
 Object.defineProperty(exports, "__esModule", { value: true });
-const src_1 = require("../../src");
+const dist_1 = require("../../dist");
 class IntegrationSenderTest {
     constructor() {
         this.sender = null;
@@ -13,7 +14,7 @@ class IntegrationSenderTest {
         this.port = 10051;
     }
     async setUp() {
-        this.sender = new src_1.Sender({
+        this.sender = new dist_1.Sender({
             server: this.host,
             port: this.port
         });
@@ -26,9 +27,9 @@ class IntegrationSenderTest {
         if (!this.sender) {
             throw new Error('Sender not initialized');
         }
-        const item = new src_1.ItemValue('test_host', 'test.key', 'test_value');
+        const item = new dist_1.ItemValue('test_host', 'test.key', 'test_value');
         const result = await this.sender.send([item]);
-        if (!(result instanceof src_1.TrapperResponse)) {
+        if (!(result instanceof dist_1.TrapperResponse)) {
             throw new Error('Unexpected response type');
         }
         if (result.total === 0) {
@@ -42,12 +43,12 @@ class IntegrationSenderTest {
             throw new Error('Sender not initialized');
         }
         const items = [
-            new src_1.ItemValue('test_host', 'test.key1', 'value1'),
-            new src_1.ItemValue('test_host', 'test.key2', 'value2'),
-            new src_1.ItemValue('test_host', 'test.key3', 'value3')
+            new dist_1.ItemValue('test_host', 'test.key1', 'value1'),
+            new dist_1.ItemValue('test_host', 'test.key2', 'value2'),
+            new dist_1.ItemValue('test_host', 'test.key3', 'value3')
         ];
         const result = await this.sender.send(items);
-        if (!(result instanceof src_1.TrapperResponse)) {
+        if (!(result instanceof dist_1.TrapperResponse)) {
             throw new Error('Unexpected response type');
         }
         if (result.total !== items.length) {
@@ -61,9 +62,9 @@ class IntegrationSenderTest {
             throw new Error('Sender not initialized');
         }
         const timestamp = Math.floor(Date.now() / 1000);
-        const item = new src_1.ItemValue('test_host', 'test.timestamp', 'timestamped_value', timestamp);
+        const item = new dist_1.ItemValue('test_host', 'test.timestamp', 'timestamped_value', timestamp);
         const result = await this.sender.send([item]);
-        if (!(result instanceof src_1.TrapperResponse)) {
+        if (!(result instanceof dist_1.TrapperResponse)) {
             throw new Error('Unexpected response type');
         }
         if (result.total === 0) {
