@@ -49,7 +49,7 @@ class BasicAuthAPITest {
         console.log('Testing basic auth login...');
         if (!this.api) throw new Error('API not initialized');
         
-        const version = this.api.apiVersion();
+        const version = await this.api.apiVersion();
         if (!(version instanceof APIVersion)) {
             throw new Error('Version getting was going wrong');
         }
@@ -71,7 +71,7 @@ class BasicAuthAPITest {
         if (!this.api) throw new Error('API not initialized');
         
         const version = await (this.api as any).apiinfo.version();
-        const apiVersion = this.api.apiVersion();
+        const apiVersion = await this.api.apiVersion();
         
         if (version !== apiVersion.toString()) {
             throw new Error('Request apiinfo.version was going wrong');

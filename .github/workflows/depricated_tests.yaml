@@ -80,6 +80,9 @@ jobs:
           npm run build
       - name: Wait for Zabbix API
         run: |
+          node ./.github/scripts/wait_instance_zabbix.js
+      - name: Run deprecated tests
+        run: |
           sleep 5
           node ./.github/scripts/$TEST_FILE 2>/tmp/depricated.log >/dev/null
       - name: Send report

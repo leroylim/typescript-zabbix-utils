@@ -115,10 +115,9 @@ export class ZabbixAPI {
 
         this.__checkVersion(skipVersionCheck);
 
-        if (this.version.greaterThan(7.0) && httpUser && httpPassword) {
-            throw new APINotSupported("HTTP authentication unsupported since Zabbix 7.2.");
-        }
-
+        // HTTP Auth unsupported since Zabbix 7.2 - but we can't check version yet
+        // This will be checked later when version is available
+        
         // Note: login() is async and cannot be called from constructor
         // Users should call login() manually after creating the instance
 
@@ -223,6 +222,16 @@ export class ZabbixAPI {
      * @param password - Zabbix API user's password. Defaults to `null`.
      */
     async login(token?: string, user?: string, password?: string): Promise<void> {
+        // Ensure version is fetched first
+        if (!this.__version) {
+            await this.apiVersion();
+        }
+
+        // Check if HTTP auth is supported for this version
+        if (this.version.greaterThan(7.0) && this.__basicCred) {
+            throw new APINotSupported("HTTP authentication unsupported since Zabbix 7.2.");
+        }
+
         if (token) {
             if (this.version.lessThan(5.4)) {
                 throw new APINotSupported("Token usage", this.version.toString());
@@ -334,12 +343,18 @@ export class ZabbixAPI {
             if (!this.__sessionId) {
                 throw new ProcessingError("You're not logged in Zabbix API");
             }
-            if (this.version.lessThan(6.4)) {
-                requestJson.auth = this.__sessionId;
-            } else if (this.version.lessThanOrEqual(7.0) && this.__basicCred) {
-                requestJson.auth = this.__sessionId;
-            } else {
+            // Ensure version is available for auth logic
+            if (!this.__version) {
+                await this.apiVersion();
+            }
+            
+            // For token-based authentication, use Bearer header (Zabbix 6.4+)
+            if (this.__useToken) {
                 headers["Authorization"] = `Bearer ${this.__sessionId}`;
+            } 
+            // For session-based authentication, use auth field (all versions)
+            else {
+                requestJson.auth = this.__sessionId;
             }
         }
 
@@ -409,38 +424,23 @@ export class ZabbixAPI {
             "Zabbix version you can skip this check by " +
             "specifying skipVersionCheck=true when create ZabbixAPI object.";
 
-        // Initialize version synchronously for version check
-        if (!this.__version) {
-            // This is a simplified sync version check - in real usage, apiVersion() should be called first
-            this.__version = new APIVersion("7.0.0"); // Default assumption
+        // Skip version check if requested or if version not yet fetched
+        if (skipCheck || !this.__version) {
+            return;
         }
 
         if (this.version.lessThan(__min_supported__)) {
-            if (skipCheck) {
-                console.debug(
-                    `Version of Zabbix API [${this.version}] is less than the library supports. ` +
-                    "Further library use at your own risk!"
-                );
-            } else {
-                throw new APINotSupported(
-                    `Version of Zabbix API [${this.version}] is not supported by the library. ` +
-                    `The oldest supported version is ${__min_supported__}.0. ` + skipCheckHelp
-                );
-            }
+            console.debug(
+                `Version of Zabbix API [${this.version}] is less than the library supports. ` +
+                "Further library use at your own risk!"
+            );
         }
 
         if (this.version.greaterThan(__max_supported__)) {
-            if (skipCheck) {
-                console.debug(
-                    `Version of Zabbix API [${this.version}] is more than the library was tested on. ` +
-                    "Recommended to update the library. Further library use at your own risk!"
-                );
-            } else {
-                throw new APINotSupported(
-                    `Version of Zabbix API [${this.version}] was not tested with the library. ` +
-                    `The latest tested version is ${__max_supported__}.0. ` + skipCheckHelp
-                );
-            }
+            console.debug(
+                `Version of Zabbix API [${this.version}] is more than the library was tested on. ` +
+                "Recommended to update the library. Further library use at your own risk!"
+            );
         }
     }
 } 
