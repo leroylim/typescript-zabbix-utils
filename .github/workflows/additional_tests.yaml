@@ -33,7 +33,7 @@ jobs:
           TBOT_CHAT: ${{ vars.TBOT_CHAT }}
           SUBJECT: Importing test without dependencies FAIL
         run: |
-          bash ./.github/scripts/library_import_tests.sh "sync" "ZabbixAPI" "Unable to connect to" > /tmp/importing.log
+          bash ./.github/scripts/library_import_tests.sh "sync" "ZabbixAPI" "Cannot find module" > /tmp/importing.log
       - name: Check import of async without dependencies
         continue-on-error: true
         env:
@@ -41,7 +41,7 @@ jobs:
           TBOT_CHAT: ${{ vars.TBOT_CHAT }}
           SUBJECT: Importing test without dependencies FAIL
         run: |
-          bash ./.github/scripts/library_import_tests.sh "async" "AsyncZabbixAPI" "ModuleNotFoundError:" > /tmp/importing.log
+          bash ./.github/scripts/library_import_tests.sh "async" "AsyncZabbixAPI" "Cannot find module" > /tmp/importing.log
       - name: Install dependencies
         run: |
           npm ci
