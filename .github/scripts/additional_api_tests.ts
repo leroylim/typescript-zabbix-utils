@@ -34,7 +34,7 @@ class CustomCertAPITest {
             validateCerts: false
         });
 
-        await this.api.login(this.user, this.password);
+        await this.api.login(undefined, this.user, this.password);
     }
 
     async tearDown(): Promise<void> {
@@ -143,7 +143,7 @@ class CustomCertAsyncAPITest {
             validateCerts: false
         });
 
-        await this.api.login(this.user, this.password);
+        await this.api.login(undefined, this.user, this.password);
     }
 
     async tearDown(): Promise<void> {

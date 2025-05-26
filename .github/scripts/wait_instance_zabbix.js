@@ -19,7 +19,7 @@ async function waitForZabbixAPI() {
                 password: 'zabbix',
                 skipVersionCheck: true
             });
-            await zapi.login('Admin', 'zabbix');
+            await zapi.login(undefined, 'Admin', 'zabbix');
             await zapi.logout();
             console.log('✓ Zabbix API is ready!');
             process.exit(0);

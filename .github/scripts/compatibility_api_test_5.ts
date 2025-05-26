@@ -43,7 +43,7 @@ class CompatibilityAPITest {
             throw new Error('Version getting was going wrong');
         }
 
-        await this.zapi.login(this.user, this.password);
+        await this.zapi.login(undefined, ZABBIX_USER, ZABBIX_PASSWORD);
 
         const sessionId = (this.zapi as any).__session_id;
         if (!sessionId) {
@@ -138,7 +138,7 @@ class CompatibilitySenderTest {
             skipVersionCheck: true
         });
 
-        await zapi.login(ZABBIX_USER, ZABBIX_PASSWORD);
+        await zapi.login(undefined, ZABBIX_USER, ZABBIX_PASSWORD);
 
         try {
             const hosts = await (zapi as any).host.get({

@@ -25,7 +25,7 @@ class CustomCertAPITest {
             skipVersionCheck: true,
             validateCerts: false
         });
-        await this.api.login(this.user, this.password);
+        await this.api.login(undefined, this.user, this.password);
     }
     async tearDown() {
         if (this.api) {
@@ -118,7 +118,7 @@ class CustomCertAsyncAPITest {
             skipVersionCheck: true,
             validateCerts: false
         });
-        await this.api.login(this.user, this.password);
+        await this.api.login(undefined, this.user, this.password);
     }
     async tearDown() {
         if (this.api) {

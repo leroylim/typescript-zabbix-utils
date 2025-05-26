@@ -33,7 +33,7 @@ class CompatibilityAPITest {
         if (!(version instanceof dist_1.APIVersion)) {
             throw new Error('Version getting was going wrong');
         }
-        await this.zapi.login(this.user, this.password);
+        await this.zapi.login(undefined, ZABBIX_USER, ZABBIX_PASSWORD);
         const sessionId = this.zapi.__session_id;
         if (!sessionId) {
             throw new Error('Login by user and password was going wrong');
@@ -113,7 +113,7 @@ class CompatibilitySenderTest {
             url: ZABBIX_URL,
             skipVersionCheck: true
         });
-        await zapi.login(ZABBIX_USER, ZABBIX_PASSWORD);
+        await zapi.login(undefined, ZABBIX_USER, ZABBIX_PASSWORD);
         try {
             const hosts = await zapi.host.get({
                 filter: { host: this.hostname },

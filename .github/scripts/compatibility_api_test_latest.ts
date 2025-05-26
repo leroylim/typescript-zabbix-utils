@@ -34,7 +34,7 @@ class CompatibilityAPITestLatest {
         console.log('Testing latest Zabbix classic auth...');
         if (!this.zapi) throw new Error('ZabbixAPI not initialized');
 
-        await this.zapi.login(this.user, this.password);
+        await this.zapi.login(undefined, this.user, this.password);
 
         const users = await (this.zapi as any).user.get({
             output: ['userid', 'name']
@@ -52,7 +52,7 @@ class CompatibilityAPITestLatest {
         if (!this.zapi) throw new Error('ZabbixAPI not initialized');
 
         try {
-            await this.zapi.login(undefined, undefined, this.token);
+            await this.zapi.login(this.token);
             
             const users = await (this.zapi as any).user.get({
                 output: ['userid', 'name']
@@ -73,7 +73,7 @@ class CompatibilityAPITestLatest {
         console.log('Testing latest Zabbix version compatibility...');
         if (!this.zapi) throw new Error('ZabbixAPI not initialized');
 
-        await this.zapi.login(this.user, this.password);
+        await this.zapi.login(undefined, this.user, this.password);
         
         const version = await this.zapi.apiVersion();
         console.log(`✓ Running on Zabbix version: ${version}`);
@@ -91,7 +91,7 @@ class CompatibilityAPITestLatest {
         console.log('Testing latest Zabbix features...');
         if (!this.zapi) throw new Error('ZabbixAPI not initialized');
 
-        await this.zapi.login(this.user, this.password);
+        await this.zapi.login(undefined, this.user, this.password);
 
         try {
             // Test latest API features
@@ -182,7 +182,7 @@ class CompatibilityAsyncAPITestLatest {
         console.log('Testing latest Zabbix async classic auth...');
         if (!this.zapi) throw new Error('AsyncZabbixAPI not initialized');
 
-        await this.zapi.login(this.user, this.password);
+        await this.zapi.login(undefined, this.user, this.password);
 
         const users = await (this.zapi as any).user.get({
             output: ['userid', 'name']
@@ -199,7 +199,7 @@ class CompatibilityAsyncAPITestLatest {
         if (!this.zapi) throw new Error('AsyncZabbixAPI not initialized');
 
         try {
-            await this.zapi.login(undefined, undefined, this.token);
+            await this.zapi.login(this.token);
             
             const users = await (this.zapi as any).user.get({
                 output: ['userid', 'name']

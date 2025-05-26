@@ -26,7 +26,7 @@ class CompatibilityAPITest6 {
         console.log('Testing Zabbix 6.0 classic auth...');
         if (!this.zapi)
             throw new Error('ZabbixAPI not initialized');
-        await this.zapi.login(this.user, this.password);
+        await this.zapi.login(undefined, this.user, this.password);
         const sessionId = this.zapi.__session_id;
         if (!sessionId) {
             throw new Error('Login by user and password was going wrong');
@@ -46,7 +46,7 @@ class CompatibilityAPITest6 {
             throw new Error('ZabbixAPI not initialized');
         try {
             // In Zabbix 6.0+, token authentication should be supported
-            await this.zapi.login(undefined, undefined, this.token);
+            await this.zapi.login(this.token);
             const users = await this.zapi.user.get({
                 output: ['userid', 'name']
             });
@@ -64,7 +64,7 @@ class CompatibilityAPITest6 {
         console.log('Testing Zabbix 6.0 version compatibility...');
         if (!this.zapi)
             throw new Error('ZabbixAPI not initialized');
-        await this.zapi.login(this.user, this.password);
+        await this.zapi.login(undefined, this.user, this.password);
         const version = await this.zapi.apiVersion();
         if (version.major < 6) {
             console.log(`⚠ Version ${version} is older than Zabbix 6.0`);
@@ -115,7 +115,7 @@ class CompatibilityAsyncAPITest6 {
         console.log('Testing Zabbix 6.0 async classic auth...');
         if (!this.zapi)
             throw new Error('AsyncZabbixAPI not initialized');
-        await this.zapi.login(this.user, this.password);
+        await this.zapi.login(undefined, this.user, this.password);
         const users = await this.zapi.user.get({
             output: ['userid', 'name']
         });
@@ -129,7 +129,7 @@ class CompatibilityAsyncAPITest6 {
         if (!this.zapi)
             throw new Error('AsyncZabbixAPI not initialized');
         try {
-            await this.zapi.login(undefined, undefined, this.token);
+            await this.zapi.login(this.token);
             const users = await this.zapi.user.get({
                 output: ['userid', 'name']
             });

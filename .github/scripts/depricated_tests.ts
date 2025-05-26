@@ -32,7 +32,7 @@ class BasicAuthAPITest {
             httpPassword: HTTP_PASSWORD
         });
 
-        await this.api.login(this.user, this.password);
+        await this.api.login(undefined, this.user, this.password);
     }
 
     async tearDown(): Promise<void> {
@@ -150,7 +150,7 @@ class BasicAuthAsyncAPITest {
             httpPassword: HTTP_PASSWORD
         });
 
-        await this.api.login(this.user, this.password);
+        await this.api.login(undefined, this.user, this.password);
     }
 
     async tearDown(): Promise<void> {
