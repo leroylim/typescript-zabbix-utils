@@ -48,6 +48,8 @@ jobs:
         run: |
           npm run build
       - name: Wait for Zabbix API
+        run: |
+          node ./.github/scripts/wait_instance_zabbix.js
       - name: Integration synchronous test
         continue-on-error: true
         run: |
