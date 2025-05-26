@@ -15,8 +15,6 @@ async function waitForZabbixAPI() {
             console.log(`Attempt ${attempt}/${maxAttempts}: Checking Zabbix API...`);
             const zapi = new dist_1.ZabbixAPI({
                 url: 'http://localhost',
-                user: 'Admin',
-                password: 'zabbix',
                 skipVersionCheck: true
             });
             await zapi.login(undefined, 'Admin', 'zabbix');

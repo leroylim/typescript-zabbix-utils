@@ -119,9 +119,8 @@ export class ZabbixAPI {
             throw new APINotSupported("HTTP authentication unsupported since Zabbix 7.2.");
         }
 
-        if (token || user || password) {
-            this.login(token, user, password);
-        }
+        // Note: login() is async and cannot be called from constructor
+        // Users should call login() manually after creating the instance
 
         // Return a proxy to handle dynamic method calls
         return new Proxy(this, {

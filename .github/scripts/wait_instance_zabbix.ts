@@ -17,8 +17,6 @@ async function waitForZabbixAPI(): Promise<void> {
             
             const zapi = new ZabbixAPI({
                 url: 'http://localhost',
-                user: 'Admin',
-                password: 'zabbix',
                 skipVersionCheck: true
             });
 
