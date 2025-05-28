@@ -72,7 +72,7 @@ class IntegrationAPITest {
         }
 
         let resp: any;
-        const sessionId = (this.zapi as any).__session_id;
+        const sessionId = (this.zapi as any).__sessionId;
         const token = (this.zapi as any).__token;
 
         if (sessionId === token) {
