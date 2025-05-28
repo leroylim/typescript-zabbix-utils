@@ -1,6 +1,14 @@
 # TypeScript Zabbix Utils
 
-[![Tests](https://github.com/leroylim/typescript-zabbix-utils/workflows/Tests/badge.svg)](https://github.com/leroylim/typescript-zabbix-utils/actions)
+[![tests](https://github.com/leroylim/typescript-zabbix-utils/actions/workflows/tests.yaml/badge.svg)](https://github.com/leroylim/typescript-zabbix-utils/actions/workflows/tests.yaml)
+[![api](https://github.com/leroylim/typescript-zabbix-utils/actions/workflows/integration_api.yaml/badge.svg)](https://github.com/leroylim/typescript-zabbix-utils/actions/workflows/integration_api.yaml)
+[![sender](https://github.com/leroylim/typescript-zabbix-utils/actions/workflows/integration_sender.yaml/badge.svg)](https://github.com/leroylim/typescript-zabbix-utils/actions/workflows/integration_sender.yaml)
+[![get](https://github.com/leroylim/typescript-zabbix-utils/actions/workflows/integration_getter.yaml/badge.svg)](https://github.com/leroylim/typescript-zabbix-utils/actions/workflows/integration_getter.yaml)
+[![zabbix_50](https://github.com/leroylim/typescript-zabbix-utils/actions/workflows/compatibility_50.yaml/badge.svg)](https://github.com/leroylim/typescript-zabbix-utils/actions/workflows/compatibility_50.yaml)
+[![zabbix_60](https://github.com/leroylim/typescript-zabbix-utils/actions/workflows/compatibility_60.yaml/badge.svg)](https://github.com/leroylim/typescript-zabbix-utils/actions/workflows/compatibility_60.yaml)
+[![zabbix_70](https://github.com/leroylim/typescript-zabbix-utils/actions/workflows/compatibility_70.yaml/badge.svg)](https://github.com/leroylim/typescript-zabbix-utils/actions/workflows/compatibility_70.yaml)
+[![zabbix_72](https://github.com/leroylim/typescript-zabbix-utils/actions/workflows/compatibility_72.yaml/badge.svg)](https://github.com/leroylim/typescript-zabbix-utils/actions/workflows/compatibility_72.yaml)
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![npm version](https://badge.fury.io/js/zabbix-utils.svg)](https://badge.fury.io/js/zabbix-utils)
 

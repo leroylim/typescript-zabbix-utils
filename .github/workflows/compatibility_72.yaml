@@ -111,6 +111,7 @@ jobs:
         run: |
           node ./.github/scripts/$TEST_FILE 2>/tmp/compatibility.log >/dev/null
       - name: Send report
+        continue-on-error: true
         env:
           TBOT_TOKEN: ${{ secrets.TBOT_TOKEN }}
           TBOT_CHAT: ${{ vars.TBOT_CHAT }}

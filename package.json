@@ -31,7 +31,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/leroylim/typescript-zabbix-utils.git"
+    "url": "git+https://github.com/leroylim/typescript-zabbix-utils.git"
   },
   "bugs": {
     "url": "https://github.com/leroylim/typescript-zabbix-utils/issues"
@@ -69,4 +69,4 @@
       "!src/**/*.d.ts"
     ]
   }
-} 
+}
