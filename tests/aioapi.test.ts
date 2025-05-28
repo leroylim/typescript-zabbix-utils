@@ -90,13 +90,18 @@ describe('AsyncZabbixAPI', () => {
         expect(api).toBeInstanceOf(AsyncZabbixAPI);
     });
 
-    test('should throw error for HTTP auth with Zabbix 7.2+', () => {
-        expect(() => {
-            new AsyncZabbixAPI({
-                httpUser: 'admin',
-                httpPassword: 'password'
-                // Will use default version which is 7.0.0, but the check is > 7.0
-            });
-        }).toThrow(APINotSupported);
+    test('should throw error for HTTP auth with Zabbix 7.2+ during login', async () => {
+        const api = new AsyncZabbixAPI({
+            httpUser: 'admin',
+            httpPassword: 'password',
+            skipVersionCheck: true
+        });
+        
+        // Mock the sendAsyncRequest to simulate version detection
+        jest.spyOn(api, 'sendAsyncRequest').mockResolvedValue({
+            result: '7.2.0'
+        });
+        
+        await expect(api.login(undefined, 'admin', 'password')).rejects.toThrow(APINotSupported);
     });
 }); 

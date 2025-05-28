@@ -106,9 +106,7 @@ export class AsyncZabbixAPI {
 
         this.__checkVersion(skipVersionCheck);
 
-        if (!skipVersionCheck && this.version.greaterThan(7.0) && httpUser && httpPassword) {
-            throw new APINotSupported("HTTP authentication unsupported since Zabbix 7.2.");
-        }
+        // Note: HTTP auth version check is deferred to login() since version detection is async
 
         // Return a proxy to handle dynamic method calls
         return new Proxy(this, {
@@ -215,6 +213,11 @@ export class AsyncZabbixAPI {
         // Ensure version is fetched first
         if (!this.__version) {
             await this.apiVersion();
+        }
+
+        // Check if HTTP auth is supported for this version
+        if (this.version.greaterThan(7.0) && this.__basicCred) {
+            throw new APINotSupported("HTTP authentication unsupported since Zabbix 7.2.");
         }
 
         if (token) {
