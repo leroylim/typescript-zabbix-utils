@@ -27,7 +27,7 @@ class CompatibilityAPITest6 {
         if (!this.zapi)
             throw new Error('ZabbixAPI not initialized');
         await this.zapi.login(undefined, this.user, this.password);
-        const sessionId = this.zapi.__session_id;
+        const sessionId = this.zapi.__sessionId;
         if (!sessionId) {
             throw new Error('Login by user and password was going wrong');
         }
