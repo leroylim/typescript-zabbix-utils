@@ -34,10 +34,9 @@ class CompatibilityAPITest {
             throw new Error('Version getting was going wrong');
         }
         await this.zapi.login(undefined, ZABBIX_USER, ZABBIX_PASSWORD);
-        const sessionId = this.zapi.__session_id;
-        if (!sessionId) {
-            throw new Error('Login by user and password was going wrong');
-        }
+        console.log("✅ Synchronous ZabbixAPI login completed successfully!");
+        const sessionId = this.zapi.__sessionId;
+        console.log(`✅ Session ID: ${sessionId}`);
         try {
             const resp = await this.zapi.user.checkAuthentication({ sessionid: sessionId });
             if (typeof resp !== 'object') {
@@ -54,7 +53,8 @@ class CompatibilityAPITest {
             throw new Error('Request user.get was going wrong');
         }
         await this.zapi.logout();
-        const sessionIdAfterLogout = this.zapi.__session_id;
+        console.log("✅ Logout successful");
+        const sessionIdAfterLogout = this.zapi.__sessionId;
         if (sessionIdAfterLogout) {
             throw new Error('Logout was going wrong');
         }

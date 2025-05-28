@@ -57,7 +57,7 @@ class IntegrationAsyncAPITest {
             throw new Error('AsyncZabbixAPI not initialized');
         }
         let resp;
-        const sessionId = this.zapi.__session_id;
+        const sessionId = this.zapi.__sessionId;
         const token = this.zapi.__token;
         if (sessionId === token) {
             resp = await this.zapi.user.checkAuthentication({ token: sessionId });
