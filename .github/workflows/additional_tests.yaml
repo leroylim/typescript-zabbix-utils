@@ -30,7 +30,7 @@ jobs:
         continue-on-error: true
         env:
           TBOT_TOKEN: ${{ secrets.TBOT_TOKEN }}
-          TBOT_CHAT: ${{ vars.TBOT_CHAT }}
+          TBOT_CHAT: ${{ secrets.TBOT_CHAT }}
           SUBJECT: Importing test without dependencies FAIL
         run: |
           bash ./.github/scripts/library_import_tests.sh "sync" "ZabbixAPI" "Cannot find module" > /tmp/importing.log
@@ -38,7 +38,7 @@ jobs:
         continue-on-error: true
         env:
           TBOT_TOKEN: ${{ secrets.TBOT_TOKEN }}
-          TBOT_CHAT: ${{ vars.TBOT_CHAT }}
+          TBOT_CHAT: ${{ secrets.TBOT_CHAT }}
           SUBJECT: Importing test without dependencies FAIL
         run: |
           bash ./.github/scripts/library_import_tests.sh "async" "AsyncZabbixAPI" "Cannot find module" > /tmp/importing.log
@@ -55,7 +55,7 @@ jobs:
         continue-on-error: true
         env:
           TBOT_TOKEN: ${{ secrets.TBOT_TOKEN }}
-          TBOT_CHAT: ${{ vars.TBOT_CHAT }}
+          TBOT_CHAT: ${{ secrets.TBOT_CHAT }}
           SUBJECT: Importing tests with dependencies FAIL
         run: |
           bash ./.github/scripts/library_import_tests.sh "async" "AsyncZabbixAPI" "Unable to connect to" > /tmp/importing.log
@@ -136,7 +136,7 @@ jobs:
       - name: Send report
         env:
           TBOT_TOKEN: ${{ secrets.TBOT_TOKEN }}
-          TBOT_CHAT: ${{ vars.TBOT_CHAT }}
+          TBOT_CHAT: ${{ secrets.TBOT_CHAT }}
           SUBJECT: Zabbix API additional tests FAIL
         run: |
           tail -n1 /tmp/additional.log | grep "OK" 1>/dev/null || tail /tmp/additional.log | node ./.github/scripts/telegram_msg.js | exit 1

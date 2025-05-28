@@ -88,7 +88,7 @@ jobs:
       - name: Send report
         env:
           TBOT_TOKEN: ${{ secrets.TBOT_TOKEN }}
-          TBOT_CHAT: ${{ vars.TBOT_CHAT }}
+          TBOT_CHAT: ${{ secrets.TBOT_CHAT }}
           SUBJECT: Zabbix API depricated tests FAIL
         run: |
           tail -n1 /tmp/depricated.log | grep "OK" 1>/dev/null || tail /tmp/depricated.log | node ./.github/scripts/telegram_msg.js | exit 1

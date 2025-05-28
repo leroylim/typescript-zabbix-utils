@@ -114,7 +114,7 @@ jobs:
         continue-on-error: true
         env:
           TBOT_TOKEN: ${{ secrets.TBOT_TOKEN }}
-          TBOT_CHAT: ${{ vars.TBOT_CHAT }}
+          TBOT_CHAT: ${{ secrets.TBOT_CHAT }}
           SUBJECT: Compatibility with Zabbix ${{ env.ZABBIX_VERSION }} FAIL
         run: |
           tail -n1 /tmp/compatibility.log | grep "OK" 1>/dev/null || tail /tmp/compatibility.log | node ./.github/scripts/telegram_msg.js | exit 1

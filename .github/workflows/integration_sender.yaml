@@ -62,7 +62,7 @@ jobs:
       - name: Send report
         env:
           TBOT_TOKEN: ${{ secrets.TBOT_TOKEN }}
-          TBOT_CHAT: ${{ vars.TBOT_CHAT }}
+          TBOT_CHAT: ${{ secrets.TBOT_CHAT }}
           SUBJECT: Zabbix sender integration test FAIL
         run: |
           err=0
