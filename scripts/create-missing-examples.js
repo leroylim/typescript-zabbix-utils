@@ -46,6 +46,11 @@ class ExampleConverter {
             return match.replace(/"/g, '"').replace(/'/g, '"');
         });
 
+        // Fix session ID property names (Python snake_case to TypeScript camelCase)
+        tsCode = tsCode.replace(/\.__session_id\b/g, '.__sessionId');
+        tsCode = tsCode.replace(/\.__use_token\b/g, '.__useToken');
+        tsCode = tsCode.replace(/\.__basic_cred\b/g, '.__basicCred');
+
         // Replace Python function calls with TypeScript
         tsCode = tsCode.replace(/api\.([a-z_]+)\.([a-z_]+)\(\*([A-Z_]+)\)/g, '(api as any).$1.$2(...$3)');
         tsCode = tsCode.replace(/api\.([a-z_]+)\.([a-z_]+)\(([^)]+)\)/g, '(api as any).$1.$2($3)');
