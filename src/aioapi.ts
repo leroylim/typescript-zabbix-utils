@@ -212,6 +212,11 @@ export class AsyncZabbixAPI {
      * @param password - Zabbix API user's password. Defaults to `null`.
      */
     async login(token?: string, user?: string, password?: string): Promise<void> {
+        // Ensure version is fetched first
+        if (!this.__version) {
+            await this.apiVersion();
+        }
+
         if (token) {
             if (this.version.lessThan(5.4)) {
                 throw new APINotSupported("Token usage", this.version.toString());
@@ -398,36 +403,33 @@ export class AsyncZabbixAPI {
             "Zabbix version you can skip this check by " +
             "specifying skipVersionCheck=true when create AsyncZabbixAPI object.";
 
-        // Initialize version synchronously for version check
-        if (!this.__version) {
-            // This is a simplified sync version check - in real usage, apiVersion() should be called first
-            this.__version = new APIVersion("7.2.0"); // Default assumption for testing
-        }
-
-        if (this.version.lessThan(__min_supported__)) {
-            if (skipCheck) {
-                console.debug(
-                    `Version of Zabbix API [${this.version}] is less than the library supports. ` +
-                    "Further library use at your own risk!"
-                );
-            } else {
+        // Only check version if we have one and aren't skipping the check
+        if (!skipCheck && this.__version) {
+            if (this.version.lessThan(__min_supported__)) {
                 throw new APINotSupported(
                     `Version of Zabbix API [${this.version}] is not supported by the library. ` +
                     `The oldest supported version is ${__min_supported__}.0. ` + skipCheckHelp
                 );
             }
-        }
 
-        if (this.version.greaterThan(__max_supported__)) {
-            if (skipCheck) {
-                console.debug(
-                    `Version of Zabbix API [${this.version}] is more than the library was tested on. ` +
-                    "Recommended to update the library. Further library use at your own risk!"
-                );
-            } else {
+            if (this.version.greaterThan(__max_supported__)) {
                 throw new APINotSupported(
                     `Version of Zabbix API [${this.version}] was not tested with the library. ` +
                     `The latest tested version is ${__max_supported__}.0. ` + skipCheckHelp
+                );
+            }
+        } else if (skipCheck && this.__version) {
+            if (this.version.lessThan(__min_supported__)) {
+                console.debug(
+                    `Version of Zabbix API [${this.version}] is less than the library supports. ` +
+                    "Further library use at your own risk!"
+                );
+            }
+
+            if (this.version.greaterThan(__max_supported__)) {
+                console.debug(
+                    `Version of Zabbix API [${this.version}] is more than the library was tested on. ` +
+                    "Recommended to update the library. Further library use at your own risk!"
                 );
             }
         }
