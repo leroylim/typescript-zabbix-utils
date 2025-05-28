@@ -80,10 +80,21 @@ jobs:
       - name: Wait for Zabbix API
         run: |
           node ./.github/scripts/wait_instance_zabbix.js
+      - name: Debug Zabbix setup
+        run: |
+          echo "=== Checking Apache status ==="
+          sudo systemctl status apache2 --no-pager || true
+          echo "=== Checking Zabbix web files ==="
+          ls -la /var/www/html/ | head -20
+          echo "=== Testing API endpoint directly ==="
+          curl -v http://localhost/api_jsonrpc.php -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","method":"apiinfo.version","params":{},"id":1}' || true
+          echo "=== Checking Zabbix server logs ==="
+          sudo tail -20 /tmp/zabbix.log || echo "No Zabbix server log found"
       - name: Compatibility test
         continue-on-error: true
         run: |
-          node ./.github/scripts/$TEST_FILE 2>/tmp/compatibility.log >/dev/null
+          echo "=== Running compatibility test with verbose output ==="
+          node ./.github/scripts/$TEST_FILE 2>&1 | tee /tmp/compatibility.log
       - name: Send report
         env:
           TBOT_TOKEN: ${{ secrets.TBOT_TOKEN }}
