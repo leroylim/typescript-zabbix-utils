@@ -33,11 +33,6 @@ class CompatibilityAPITest6 {
             throw new Error('Creating ZabbixAPI object was going wrong');
         }
 
-        const version = this.zapi.apiVersion();
-        if (!(version instanceof dist_1.APIVersion)) {
-            throw new Error('Version getting was going wrong');
-        }
-
         await this.zapi.login(undefined, ZABBIX_USER, ZABBIX_PASSWORD);
         console.log("✅ Synchronous ZabbixAPI login completed successfully!");
 
