@@ -42,7 +42,7 @@ class IntegrationAsyncAPITest {
             throw new Error('Login was going wrong');
         }
 
-        const version = this.zapi.apiVersion();
+        const version = this.zapi.version;
         if (!(version instanceof APIVersion)) {
             throw new Error('Version getting was going wrong');
         }
@@ -56,7 +56,7 @@ class IntegrationAsyncAPITest {
         }
 
         const version = await (this.zapi as any).apiinfo.version();
-        const apiVersion = this.zapi.apiVersion();
+        const apiVersion = this.zapi.version;
         
         if (version !== apiVersion.toString()) {
             throw new Error('Request apiinfo.version was going wrong');
