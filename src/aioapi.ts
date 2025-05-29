@@ -30,7 +30,6 @@ import { v4 as uuid4 } from 'uuid';
 import { APIVersion } from './types';
 import { ModuleUtils } from './common';
 import { APIRequestError, APINotSupported, ProcessingError } from './exceptions';
-import { Logger } from './logger';
 import { __version__, __min_supported__, __max_supported__ } from './version';
 
 export class AsyncAPIObject {
@@ -155,7 +154,7 @@ export class AsyncZabbixAPI {
                 params = null;
             }
 
-            Logger.debug(`Executing ${method} method`);
+            console.debug(`Executing ${method} method`);
 
             const needAuth = !ModuleUtils.UNAUTH_METHODS.includes(method);
 
@@ -171,7 +170,7 @@ export class AsyncZabbixAPI {
          * @param user - Basic Authentication username.
          * @param password - Basic Authentication password.
          */
-        Logger.debug(
+        console.debug(
             `Enable Basic Authentication with username:${user} password:${ModuleUtils.HIDING_MASK}`
         );
 
@@ -253,7 +252,7 @@ export class AsyncZabbixAPI {
             };
         }
 
-        Logger.debug(
+        console.debug(
             `Login to Zabbix API using username:${user} password:${ModuleUtils.HIDING_MASK}`
         );
         this.__useToken = false;
@@ -261,7 +260,7 @@ export class AsyncZabbixAPI {
         const loginResponse = await this.sendAsyncRequest('user.login', userCred, false);
         this.__sessionId = loginResponse.result;
 
-        Logger.debug(`Connected to Zabbix API version ${this.version}: ${this.url}`);
+        console.debug(`Connected to Zabbix API version ${this.version}: ${this.url}`);
     }
 
     /**
@@ -275,11 +274,11 @@ export class AsyncZabbixAPI {
                 return;
             }
 
-            Logger.debug("Logout from Zabbix API");
+            console.debug("Logout from Zabbix API");
             await this.sendAsyncRequest('user.logout', {}, true);
             this.__sessionId = undefined;
         } else {
-            Logger.debug("You're not logged in Zabbix API");
+            console.debug("You're not logged in Zabbix API");
         }
     }
 
@@ -290,16 +289,16 @@ export class AsyncZabbixAPI {
      */
     async checkAuth(): Promise<boolean> {
         if (!this.__sessionId) {
-            Logger.debug("You're not logged in Zabbix API");
+            console.debug("You're not logged in Zabbix API");
             return false;
         }
 
         let refreshResp: any;
         if (this.__useToken) {
-            Logger.debug("Check auth session using token in Zabbix API");
+            console.debug("Check auth session using token in Zabbix API");
             refreshResp = await this.sendAsyncRequest('user.checkAuthentication', { token: this.__sessionId }, false);
         } else {
-            Logger.debug("Check auth session using sessionid in Zabbix API");
+            console.debug("Check auth session using sessionid in Zabbix API");
             refreshResp = await this.sendAsyncRequest('user.checkAuthentication', { sessionid: this.__sessionId }, false);
         }
 
@@ -345,7 +344,7 @@ export class AsyncZabbixAPI {
             headers["Authorization"] = `Basic ${this.__basicCred}`;
         }
 
-        Logger.debug(
+        console.debug(
             `Sending async request to ${this.url} with body:`,
             requestJson
         );
@@ -370,7 +369,7 @@ export class AsyncZabbixAPI {
             const respJson = response.data;
 
             if (!ModuleUtils.FILES_METHODS.includes(method)) {
-                Logger.debug("Received async response body:", respJson);
+                console.debug("Received async response body:", respJson);
             } else {
                 const debugJson = { ...respJson };
                 if (debugJson.result) {
@@ -378,7 +377,7 @@ export class AsyncZabbixAPI {
                         ? debugJson.result.slice(0, 197) + '...' 
                         : debugJson.result;
                 }
-                Logger.debug("Received async response body (clipped):", JSON.stringify(debugJson, null, 4));
+                console.debug("Received async response body (clipped):", JSON.stringify(debugJson, null, 4));
             }
 
             if ('error' in respJson) {
@@ -424,14 +423,14 @@ export class AsyncZabbixAPI {
             }
         } else if (skipCheck && this.__version) {
             if (this.version.lessThan(__min_supported__)) {
-                Logger.debug(
+                console.debug(
                     `Version of Zabbix API [${this.version}] is less than the library supports. ` +
                     "Further library use at your own risk!"
                 );
             }
 
             if (this.version.greaterThan(__max_supported__)) {
-                Logger.debug(
+                console.debug(
                     `Version of Zabbix API [${this.version}] is more than the library was tested on. ` +
                     "Recommended to update the library. Further library use at your own risk!"
                 );

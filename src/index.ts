@@ -41,7 +41,7 @@ export { ModuleBaseException, APIRequestError, APINotSupported, ProcessingError 
 
 // Utilities
 export { ModuleUtils, ZabbixProtocol } from './common';
-export { EmptyHandler, SensitiveFilter, Logger } from './logger';
+export { EmptyHandler, SensitiveFilter } from './logger';
 
 // Version info
 export { __version__, __min_supported__, __max_supported__ } from './version'; 
