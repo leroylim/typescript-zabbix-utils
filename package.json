@@ -1,6 +1,6 @@
 {
   "name": "zabbix-utils",
-  "version": "2.0.2",
+  "version": "2.0.2-patch.1",
   "description": "TypeScript port of zabbix-utils - Python library for working with Zabbix API, Sender, and Getter protocols",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
