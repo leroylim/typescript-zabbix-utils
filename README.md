@@ -10,7 +10,7 @@
 [![zabbix_72](https://github.com/leroylim/typescript-zabbix-utils/actions/workflows/compatibility_72.yaml/badge.svg)](https://github.com/leroylim/typescript-zabbix-utils/actions/workflows/compatibility_72.yaml)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![npm version](https://badge.fury.io/js/zabbix-utils.svg)](https://badge.fury.io/js/zabbix-utils)
+[![npm version](https://badge.fury.io/js/zabbix-utils.svg?icon=si%3Anpm)](https://badge.fury.io/js/zabbix-utils)
 
 A TypeScript port of the official [zabbix-utils](https://github.com/zabbix/python-zabbix-utils) Python library for working with Zabbix API, Zabbix sender, and Zabbix getter protocols.
 
