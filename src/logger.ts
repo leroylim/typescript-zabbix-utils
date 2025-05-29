@@ -57,4 +57,26 @@ export class SensitiveFilter {
 
         return true;
     }
+}
+
+export class Logger {
+    private static debugEnabled: boolean = process.env.NODE_ENV === 'development' || process.env.DEBUG === 'true';
+
+    static debug(...args: any[]): void {
+        if (this.debugEnabled) {
+            console.debug(...args);
+        }
+    }
+
+    static enableDebug(): void {
+        this.debugEnabled = true;
+    }
+
+    static disableDebug(): void {
+        this.debugEnabled = false;
+    }
+
+    static isDebugEnabled(): boolean {
+        return this.debugEnabled;
+    }
 } 
