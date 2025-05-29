@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 env:
-  ZABBIX_VERSION: '7.0'
+  ZABBIX_VERSION: '6.0'
   ZABBIX_BRANCH: release/$ZABBIX_VERSION
   CONFIG_PATH: .github/configs/
   TEST_FILE: depricated_tests.js
@@ -89,6 +89,6 @@ jobs:
         env:
           TBOT_TOKEN: ${{ secrets.TBOT_TOKEN }}
           TBOT_CHAT: ${{ secrets.TBOT_CHAT }}
-          SUBJECT: Zabbix API depricated tests FAIL
+          SUBJECT: Zabbix 6.0 deprecated features test FAIL
         run: |
           tail -n1 /tmp/depricated.log | grep "OK" 1>/dev/null || tail /tmp/depricated.log | node ./.github/scripts/telegram_msg.js | exit 1

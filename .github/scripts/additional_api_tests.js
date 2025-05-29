@@ -41,7 +41,7 @@ class CustomCertAPITest {
         console.log('Testing custom cert login...');
         if (!this.api)
             throw new Error('API not initialized');
-        const version = this.api.apiVersion();
+        const version = await this.api.apiVersion();
         if (!(version instanceof dist_1.APIVersion)) {
             throw new Error('Version getting was going wrong');
         }
@@ -52,7 +52,7 @@ class CustomCertAPITest {
         if (!this.api)
             throw new Error('API not initialized');
         const version = await this.api.apiinfo.version();
-        const apiVersion = this.api.apiVersion();
+        const apiVersion = await this.api.apiVersion();
         if (version !== apiVersion.toString()) {
             throw new Error('Request apiinfo.version was going wrong');
         }
