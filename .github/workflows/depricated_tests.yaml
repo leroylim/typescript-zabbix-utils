@@ -81,10 +81,10 @@ jobs:
       - name: Wait for Zabbix API
         run: |
           node ./.github/scripts/wait_instance_zabbix.js
-      - name: Run deprecated tests
+      - name: Deprecated test
+        continue-on-error: true
         run: |
-          sleep 5
-          node ./.github/scripts/$TEST_FILE 2>/tmp/depricated.log >/dev/null
+          node ./.github/scripts/$TEST_FILE >/tmp/depricated.log 2>&1
       - name: Send report
         env:
           TBOT_TOKEN: ${{ secrets.TBOT_TOKEN }}

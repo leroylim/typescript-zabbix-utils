@@ -90,14 +90,14 @@ jobs:
         continue-on-error: true
         run: |
           grep -Po "(?<=Changes for ).*$" /tmp/zabbix-branch/ChangeLog 2>/dev/null | head -n1
-      - name: Integration synchronous test
+      - name: Sync integration test
         continue-on-error: true
         run: |
-          node ./.github/scripts/$SYNC_FILE 2>/tmp/integration_sync.log >/dev/null
-      - name: Integration asynchronous test
+          node ./.github/scripts/$SYNC_FILE >/tmp/integration_sync.log 2>&1
+      - name: Async integration test
         continue-on-error: true
         run: |
-          node ./.github/scripts/$ASYNC_FILE 2>/tmp/integration_async.log >/dev/null
+          node ./.github/scripts/$ASYNC_FILE >/tmp/integration_async.log 2>&1
       - name: Send report
         env:
           TBOT_TOKEN: ${{ secrets.TBOT_TOKEN }}
