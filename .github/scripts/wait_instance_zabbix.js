@@ -18,6 +18,9 @@ async function waitForZabbixAPI() {
                 skipVersionCheck: true
             });
             await zapi.login(undefined, 'Admin', 'zabbix');
+            // Get and display the actual server version
+            const version = await zapi.apiVersion();
+            console.log(`✓ Connected to Zabbix API version ${version}`);
             await zapi.logout();
             console.log('✓ Zabbix API is ready!');
             process.exit(0);
