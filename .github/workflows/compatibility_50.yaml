@@ -44,9 +44,9 @@ jobs:
           sudo cp $WORKDIR/${{ env.CONFIG_PATH }}/zabbix.conf.php /var/www/html/conf/
           sudo cp $WORKDIR/${{ env.CONFIG_PATH }}/pg_hba.conf /etc/postgresql/14/main/pg_hba.conf
           sudo chown -R www-data:www-data /var/www/html/
-          sudo sed -i "s/post_max_size = 8M/post_max_size = 16M/g" /etc/php/7.4/fpm/php.ini
-          sudo sed -i "s/max_execution_time = 30/max_execution_time = 300/g" /etc/php/7.4/fpm/php.ini
-          sudo sed -i "s/max_input_time = 60/max_input_time = 300/g" /etc/php/7.4/fpm/php.ini
+          sudo sed -i "s/post_max_size = 8M/post_max_size = 16M/g" /etc/php/7.4/apache2/php.ini
+          sudo sed -i "s/max_execution_time = 30/max_execution_time = 300/g" /etc/php/7.4/apache2/php.ini
+          sudo sed -i "s/max_input_time = 60/max_input_time = 300/g" /etc/php/7.4/apache2/php.ini
           sudo locale-gen en_US.UTF-8
           sudo update-locale
       - name: Prepare environment
