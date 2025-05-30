@@ -33,6 +33,7 @@ jobs:
           ./bootstrap.sh
           ./configure --enable-server --with-postgresql
           sudo make dbschema_postgresql
+          sudo make
           echo -e "CacheUpdateFrequency=1\n" >> ./conf/zabbix_server.conf
           sudo mkdir -p /etc/nginx/ssl/
           sudo cp $WORKDIR/${{ env.CONFIG_PATH }}/.htpasswd /etc/nginx/.htpasswd
@@ -48,8 +49,6 @@ jobs:
           sudo sed -i "s/post_max_size = 8M/post_max_size = 16M/g" /etc/php/8.1/apache2/php.ini
           sudo sed -i "s/max_execution_time = 30/max_execution_time = 300/g" /etc/php/8.1/apache2/php.ini
           sudo sed -i "s/max_input_time = 60/max_input_time = 300/g" /etc/php/8.1/apache2/php.ini
-          sudo sed -i "s/Listen 80/Listen 8080/g" /etc/apache2/ports.conf
-          sudo sed -i "s/<VirtualHost \*\:80>/<VirtualHost *:8080>/g" /etc/apache2/sites-enabled/000-default.conf
           sudo locale-gen en_US.UTF-8
           sudo update-locale
       - name: Prepare environment
@@ -67,9 +66,13 @@ jobs:
           cat schema.sql | sudo -u zabbix psql zabbix
           cat images.sql | sudo -u zabbix psql zabbix
           cat data.sql | sudo -u zabbix psql zabbix
+          sudo apache2ctl start
+      - name: Start Zabbix server
+        run: |
+          cd /tmp/zabbix-branch
+          sudo ./src/zabbix_server/zabbix_server -c ./conf/zabbix_server.conf
       - name: Start Apache & Nginx
         run: |
-          sudo apache2ctl start
           sudo nginx -g "daemon on; master_process on;"
       - name: Install Node.js
         run: |
