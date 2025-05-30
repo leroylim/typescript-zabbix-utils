@@ -18,26 +18,45 @@ class ZabbixReleaseChecker {
     }
     async checkNewRelease() {
         try {
-            console.log('Checking for new Zabbix releases...');
-            // Check GitHub releases API for Zabbix
-            const response = await axios_1.default.get('https://api.github.com/repos/zabbix/zabbix/releases/latest');
-            const latestRelease = response.data;
-            console.log(`Latest Zabbix release: ${latestRelease.tag_name}`);
-            console.log(`Published at: ${latestRelease.published_at}`);
-            console.log(`Release URL: ${latestRelease.html_url}`);
-            // Check if this is a new release (basic implementation)
-            const releaseDate = new Date(latestRelease.published_at);
-            const daysSinceRelease = (Date.now() - releaseDate.getTime()) / (1000 * 60 * 60 * 24);
-            if (daysSinceRelease <= 7) {
-                console.log('🚨 New Zabbix release detected within the last 7 days!');
-                console.log('Consider updating the TypeScript library compatibility.');
+            console.log('Checking for new Zabbix release branches...');
+            if (!this.branchesUrl) {
+                throw new Error('BRANCHES_URL environment variable is not set');
             }
-            else {
-                console.log('✓ No recent Zabbix releases detected.');
+            // Check Zabbix Git API for release branches
+            const response = await axios_1.default.get(this.branchesUrl);
+            const branches = response.data.values || [];
+            // Filter for release branches (e.g., release/7.4, release/7.2)
+            const releaseBranches = branches.filter(branch => branch.displayId.startsWith('release/') &&
+                /^release\/\d+\.\d+$/.test(branch.displayId));
+            if (releaseBranches.length === 0) {
+                console.log('No release branches found.');
+                return;
             }
+            // Sort release branches by version number (highest first)
+            releaseBranches.sort((a, b) => {
+                const versionA = a.displayId.replace('release/', '');
+                const versionB = b.displayId.replace('release/', '');
+                return versionB.localeCompare(versionA, undefined, { numeric: true });
+            });
+            const latestReleaseBranch = releaseBranches[0];
+            console.log(`Latest Zabbix release branch: ${latestReleaseBranch.displayId}`);
+            console.log(`Latest commit: ${latestReleaseBranch.latestCommit}`);
+            console.log(`Branch ID: ${latestReleaseBranch.id}`);
+            // List all release branches for information
+            console.log('\nAll available release branches:');
+            releaseBranches.forEach(branch => {
+                console.log(`  - ${branch.displayId} (${branch.latestCommit.substring(0, 8)})`);
+            });
+            console.log(`\n📝 For manual compatibility updates, see: ${this.manualRepo}`);
+            console.log('✓ Zabbix release branch check completed.');
         }
         catch (error) {
             console.error('Error checking for new Zabbix releases:', error);
+            // If it's a network error, show more details
+            if (axios_1.default.isAxiosError(error)) {
+                console.error(`HTTP Status: ${error.response?.status}`);
+                console.error(`Response data:`, error.response?.data);
+            }
             process.exit(1);
         }
     }
