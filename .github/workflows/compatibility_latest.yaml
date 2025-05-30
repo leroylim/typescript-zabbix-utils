@@ -110,7 +110,7 @@ jobs:
       - name: Compatibility test
         continue-on-error: true
         run: |
-          node ./.github/scripts/$TEST_FILE 2>/tmp/compatibility.log >/dev/null
+          node ./.github/scripts/$TEST_FILE >/tmp/compatibility.log 2>&1
       - name: Send report
         env:
           TBOT_TOKEN: ${{ secrets.TBOT_TOKEN }}
